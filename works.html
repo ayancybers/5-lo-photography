@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="saudi">
+<head>
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('site_theme');
+            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        } catch (_) {}
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المعرض | 5lo Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+    </style>
+</head>
+<body id="top">
+
+    
+    <div id="site-header"></div>
+
+    
+    <main>
+        <section>
+            <div class="container">
+                <div class="sec-header" style="text-align: center;">
+                    <span class="badge" data-i18n="sec1_badge">المشهد الأول / الأعمال</span>
+                    <h2 class="sec-title">
+                        <span data-i18n="sec1_t1">التفاصيل ليست</span> 
+                        <span style="color: var(--accent);" data-i18n="sec1_t2">تفصيلاً.</span>
+                    </h2>
+                </div>
+
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterWorks('all', event)" data-i18n="filter_all">الكل</button>
+                    <button class="filter-btn" onclick="filterWorks('video', event)" data-i18n="filter_videos">فيديوهات</button>
+                    <button class="filter-btn" onclick="filterWorks('image', event)" data-i18n="filter_photos">صور</button>
+                </div>
+
+                
+                <div class="works-grid" id="galleryGrid">
+
+                    <!-- ===== VIDEO ITEMS: START ===== -->
+                    <!-- Add new video cards below this line. Put each video in the work/ folder and keep data-category="video". -->
+                    <div class="media-card" data-category="video">
+                        <video src="work/video1.mp4" muted loop autoplay playsinline></video>
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="work1">إيقاع الطريق والسرعة</span>
+                            <h3 style="font-size: 18px;" data-i18n="sec1_badge">Rolling Shots</h3>
+                        </div>
+                    </div>
+
+                    
+                    <div class="media-card" data-category="video">
+                        <video src="work/video2.mp4" muted loop autoplay playsinline></video>
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="work2">زوايا دقيقة وإضاءة مدروسة</span>
+                            <h3 style="font-size: 18px;">Cinematic Cut</h3>
+                        </div>
+                    </div>
+
+                    <!-- ===== VIDEO ITEMS: END ===== -->
+
+                    <!-- ===== IMAGE ITEMS: START ===== -->
+                    <!-- Add new image cards below this line. Put each image in the work/ folder and keep data-category="image". -->
+                    <div class="media-card" data-category="image">
+                        <img src="work/photo1.png" alt="صورة 1" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_1">01 / صور ثابتة</span>
+                            <h3 style="font-size: 18px;" data-i18n="photo_title_1">لقطة إضافية 1</h3>
+                        </div>
+                    </div>
+
+                    
+                    <div class="media-card" data-category="image">
+                        <img src="work/photo2.png" alt="صورة 2" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_2">02 / صور ثابتة</span>
+                            <h3 style="font-size: 18px;" data-i18n="photo_title_2">لقطة إضافية 2</h3>
+                        </div>
+                    </div>
+
+                    
+                    <div class="media-card" data-category="image">
+                        <img src="work/photo3.png" alt="صورة 3" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_3">03 / صور ثابتة</span>
+                            <h3 style="font-size: 18px;" data-i18n="photo_title_3">لقطة إضافية 3</h3>
+                        </div>
+                    </div>
+
+                    
+                    <div class="media-card" data-category="image">
+                        <img src="work/photo4.png" alt="صورة 4" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <div class="media-info">
+                            <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_4">04 / صور ثابتة</span>
+                            <h3 style="font-size: 18px;" data-i18n="photo_title_4">لقطة إضافية 4</h3>
+                        </div>
+                    </div>
+
+                    <!-- ===== IMAGE ITEMS: END ===== -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    
+    <div id="site-footer"></div>
+
+    
+    <script src="main.js"></script>
+    <script>
+        function filterWorks(category, event) {
+            const cards = document.querySelectorAll('.works-grid .media-card');
+            const buttons = document.querySelectorAll('.filter-buttons .filter-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

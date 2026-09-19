@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="saudi">
+<head>
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('site_theme');
+            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        } catch (_) {}
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5lo Studio — استوديو تصوير السيارات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="top">
+
+    
+    <div id="site-header"></div>
+
+    
+    <main>
+        <section class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+                <source src="work/video1.mp4" type="video/mp4">
+            </video>
+            <div class="container">
+                <span class="badge" data-i18n="hero_badge">استوديو تصوير السيارات — الدمام، الخبر، والقطيف</span>
+                <h1 data-i18n="hero_title">خلِّ سيارتك <span style="color: var(--accent);">تتحرك</span> حتى وهي ثابتة.</h1>
+                <p data-i18n="hero_desc">نصنع للسيارات حضوراً يُرى ويُحس. صورة دقيقة، فيلم قصير بإيقاعه، وذاكرة تستحق أن تُحفظ.</p>
+                
+                <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px;">
+                    <a href="/packages#contact" class="btn-main" data-i18n="btn_start">ابدأ مشروعك</a>
+                    <a href="/works" class="btn-sec" data-i18n="btn_works">استعرض الأعمال</a>
+                </div>
+            </div>
+        </section>
+
+        
+    </main>
+
+    
+    <div id="site-footer"></div>
+
+    
+    <script src="main.js"></script>
+
+    
+    <script>
+        const loaderHTML = `
+            <div id="loader-wrapper">
+                <div class="loader-content">
+                    <div class="loader-circle"></div>
+                    <img src="work/logo.png" alt="5lo Studio" class="loader-logo">
+                </div>
+                <div class="loader-info">
+                    <div class="loader-percentage" id="loaderPercentage">0%</div>
+                    <div class="loader-message" id="loaderMessage" data-i18n="load_msg_1">جاري تهيئة الاستوديو وتحميل عناصر الصفحة...</div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+
+        window.addEventListener('load', () => {
+            let percent = 0;
+            const percentEl = document.getElementById('loaderPercentage');
+            const msgEl = document.getElementById('loaderMessage');
+            const loader = document.getElementById('loader-wrapper');
+
+            const interval = setInterval(() => {
+                percent += Math.floor(Math.random() * 12) + 8;
+                if (percent >= 100) {
+                    percent = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (loader) {
+                            loader.classList.add('loader-hidden');
+                        }
+                    }, 300);
+                }
+
+                if (percentEl) percentEl.textContent = percent + '%';
+
+                if (msgEl) {
+                    if (percent > 65) {
+                        msgEl.textContent = translations[currentLang]['load_msg_3'] || 'كل شيء جاهز تقريباً، استعد للانطلاق! 🚀';
+                    } else if (percent > 35) {
+                        msgEl.textContent = translations[currentLang]['load_msg_2'] || 'جاري تجهيز مقاطع الفيديو والسينمائيات...';
+                    }
+                }
+            }, 70);
+        });
+    </script>
+</body>
+</html>
