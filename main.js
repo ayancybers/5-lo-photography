@@ -16,6 +16,7 @@ document.getElementById('site-header').innerHTML = `
 
                 <img
                     src="work/logo.png"
+                    data-asset="logo"
                     alt="5lo Studio"
                     class="logo-img"
                     onerror="this.style.display='none'"
@@ -859,6 +860,49 @@ function enableBasicClientDeterrents() {
         }
     }, true);
 }
+const ASSET_DEFAULTS = {
+    logo: 'work/logo.png',
+    photo1: 'work/photo1.png',
+    photo2: 'work/photo2.png',
+    photo3: 'work/photo3.png',
+    photo4: 'work/photo4.png',
+    photo5: 'work/photo5.png',
+    video1: 'work/video1.mp4',
+    video2: 'work/video2.mp4',
+    video3: 'work/video3.mp4',
+    video4: 'work/video4.mp4',
+    video5: 'work/video5.mp4'
+};
+
+async function loadAssetLinks() {
+    let assets = ASSET_DEFAULTS;
+
+    try {
+        const response = await fetch('assets.json', { cache: 'no-store' });
+        if (response.ok) {
+            const configuredAssets = await response.json();
+            assets = { ...ASSET_DEFAULTS, ...configuredAssets };
+        }
+    } catch (error) {
+        console.warn('Asset links could not be loaded:', error);
+    }
+
+    document.querySelectorAll('[data-asset]').forEach(element => {
+        const assetKey = element.getAttribute('data-asset');
+        const assetUrl = assets[assetKey];
+        if (!assetUrl || typeof assetUrl !== 'string') return;
+
+        element.src = assetUrl;
+
+        if (element.tagName === 'SOURCE' && element.parentElement) {
+            element.parentElement.load();
+            element.parentElement.play().catch(() => {});
+        } else if (element.tagName === 'VIDEO') {
+            element.load();
+            element.play().catch(() => {});
+        }
+    });
+}
 function reportVisit() {
     fetch('/api/log', {
         method: 'POST',
@@ -879,6 +923,7 @@ function initializeWebsite() {
     adjustQuickBookingPosition();
     applyTranslations();
     enableBasicClientDeterrents();
+    loadAssetLinks();
     reportVisit();
 }
 if (document.readyState === 'loading') {
