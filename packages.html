@@ -111,12 +111,12 @@
                 <form id="bookingForm" class="card" style="background: var(--bg-primary);" onsubmit="sendToWhatsApp(event)">
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_name">الاسم
-                            <input type="text" id="clientName" class="input-box" placeholder="كيف نناديك؟" data-i18n-placeholder="form_name_placeholder" required>
+                            <input type="text" id="clientName" class="input-box" placeholder="كيف نناديك؟" data-i18n-placeholder="form_name_placeholder" minlength="2" maxlength="50" autocomplete="name" required>
                         </label>
 
                         
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_phone">رقم التواصل
-                            <input type="tel" id="clientPhone" class="input-box" placeholder="05XXXXXXXX" data-i18n-placeholder="form_phone_placeholder" maxlength="10" minlength="10" pattern="[0-9]{10}" title="يجب أن يتكون رقم التواصل من 10 أرقام ويبدأ بـ 05" data-i18n-title="form_phone_title" required dir="ltr">
+                            <input type="tel" id="clientPhone" class="input-box" placeholder="05XXXXXXXX" data-i18n-placeholder="form_phone_placeholder" maxlength="10" minlength="10" pattern="05[0-9]{8}" inputmode="numeric" autocomplete="tel" title="يجب أن يتكون رقم التواصل من 10 أرقام ويبدأ بـ 05" data-i18n-title="form_phone_title" required dir="ltr">
                         </label>
                         
                         
@@ -146,7 +146,7 @@
 
                         
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_vehicle_model">الماركة والموديل
-                            <input type="text" id="vehicleModel" class="input-box" placeholder="مثال: Ford Mustang 2024" data-i18n-placeholder="vehicle_model_placeholder">
+                            <input type="text" id="vehicleModel" class="input-box" placeholder="مثال: Ford Mustang 2024" data-i18n-placeholder="vehicle_model_placeholder" maxlength="80">
                         </label>
 
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_pkg">نوع الباقة أو الطلب
@@ -159,8 +159,13 @@
                             </select>
                         </label>
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_details">تفاصيل إضافية
-                            <textarea id="clientDetails" class="input-box" rows="3" placeholder="نوع السيارة، ملاحظاتك..." data-i18n-placeholder="form_details_placeholder" required style="resize: none;"></textarea>
+                            <textarea id="clientDetails" class="input-box" rows="3" placeholder="نوع السيارة، ملاحظاتك..." data-i18n-placeholder="form_details_placeholder" minlength="3" maxlength="500" required style="resize: none;"></textarea>
                         </label>
+                        <div aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;">
+                            <label>Website
+                                <input type="text" id="websiteField" name="website" tabindex="-1" autocomplete="off">
+                            </label>
+                        </div>
                     </div>
                     <button type="submit" class="btn-main" style="width: 100%; justify-content: center; margin-top: 24px;" data-i18n="form_submit">إرسال عبر الواتساب ←</button>
                 </form>
@@ -171,20 +176,68 @@
     <div id="site-footer"></div>
     <script src="main.js"></script>
     <script>
+        const bookingFormLoadedAt = Date.now();
+        const BOOKING_COOLDOWN_MS = 60 * 1000;
+        const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+
+        function cleanBookingText(value, maxLength) {
+            return String(value || '')
+                .replace(/[\u0000-\u001F\u007F]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, maxLength);
+        }
+
+        function bookingAlert(arMessage, enMessage) {
+            alert(currentLang === 'ar' ? arMessage : enMessage);
+        }
+
         function sendToWhatsApp(event) {
             event.preventDefault();
-            
-            const name = document.getElementById('clientName').value;
-            const phone = document.getElementById('clientPhone').value;
+
+            const form = event.currentTarget;
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (document.getElementById('websiteField').value.trim()) return;
+
+            if (Date.now() - bookingFormLoadedAt < 3000) {
+                bookingAlert('انتظر لحظات ثم حاول مرة أخرى.', 'Please wait a moment and try again.');
+                return;
+            }
+
+            const lastSentAt = Number(localStorage.getItem('booking_last_sent_at') || 0);
+            if (Date.now() - lastSentAt < BOOKING_COOLDOWN_MS) {
+                bookingAlert('فضلاً انتظر دقيقة قبل إرسال طلب آخر.', 'Please wait one minute before sending another request.');
+                return;
+            }
+
+            const name = cleanBookingText(document.getElementById('clientName').value, 50);
+            const phone = document.getElementById('clientPhone').value.replace(/\D/g, '');
             const citySelect = document.getElementById('clientCity');
             const city = citySelect.options[citySelect.selectedIndex].text;
             const vehicleTypeSelect = document.getElementById('vehicleType');
             const vehicleType = vehicleTypeSelect.options[vehicleTypeSelect.selectedIndex].text;
-            const vehicleModel = document.getElementById('vehicleModel').value.trim() ||
+            const vehicleModel = cleanBookingText(document.getElementById('vehicleModel').value, 80) ||
                                  (currentLang === 'ar' ? 'غير محدد' : 'Not specified');
             const packageSelect = document.getElementById('packageSelect');
             const pkg = packageSelect.options[packageSelect.selectedIndex].text;
-            const details = document.getElementById('clientDetails').value;
+            const details = cleanBookingText(document.getElementById('clientDetails').value, 500);
+
+            if (!/^05\d{8}$/.test(phone) || name.length < 2 || details.length < 3) {
+                bookingAlert('تأكد من صحة البيانات المدخلة.', 'Please check the entered information.');
+                return;
+            }
+
+            const fingerprint = [name.toLowerCase(), phone, city, vehicleType, vehicleModel.toLowerCase(), pkg, details.toLowerCase()].join('|');
+            const lastFingerprint = localStorage.getItem('booking_last_fingerprint');
+            const lastFingerprintAt = Number(localStorage.getItem('booking_last_fingerprint_at') || 0);
+            if (fingerprint === lastFingerprint && Date.now() - lastFingerprintAt < DUPLICATE_WINDOW_MS) {
+                bookingAlert('تم إرسال هذا الطلب مسبقاً. حاول لاحقاً إذا أردت إرسال طلب جديد.', 'This request was already sent. Please try again later for a new request.');
+                return;
+            }
 
             const message = currentLang === 'ar'
                 ? `مرحباً 5lo Studio، أرغب بحجز موعد:\n` +
@@ -205,6 +258,14 @@
                   `- Details: ${details}`;
 
             const whatsappUrl = `https://wa.me/966597561765?text=${encodeURIComponent(message)}`;
+            localStorage.setItem('booking_last_sent_at', String(Date.now()));
+            localStorage.setItem('booking_last_fingerprint', fingerprint);
+            localStorage.setItem('booking_last_fingerprint_at', String(Date.now()));
+
+            const submitButton = form.querySelector('[type="submit"]');
+            submitButton.disabled = true;
+            setTimeout(() => { submitButton.disabled = false; }, BOOKING_COOLDOWN_MS);
+
             fetch('/api/book', {
                 method: 'POST',
                 headers: {
@@ -223,7 +284,7 @@
                 console.warn('Booking webhook failed:', error);
             });
 
-            window.open(whatsappUrl, '_blank');
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
         }
     </script>
 </body>
