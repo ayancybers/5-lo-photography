@@ -10,7 +10,7 @@ document.getElementById('site-header').innerHTML = `
 
             
             <div class="logo-wrapper">
-                <a href="/" class="logo">
+                <a href="index.html" class="logo">
                     5lo <span>Studio</span>
                 </a>
 
@@ -25,7 +25,7 @@ document.getElementById('site-header').innerHTML = `
                 <div class="nav-controls" id="navControlsContainer">
 
                     
-                    <a href="/packages#contact"
+                    <a href="packages.html#contact"
                        class="btn-main"
                        id="quickBookingBtn"
                        style="padding: 8px 14px; font-size: 13px;">
@@ -136,25 +136,25 @@ document.getElementById('site-header').innerHTML = `
 
             
             <nav class="nav-links">
-                    <a href="/"
+                    <a href="index.html"
                        data-i18n="nav_home"
                        id="link-index">
                         الرئيسية
                     </a>
 
-                    <a href="/works"
+                    <a href="works.html"
                        data-i18n="nav_works"
                        id="link-works">
                         المعرض
                     </a>
 
-                    <a href="/services"
+                    <a href="services.html"
                        data-i18n="nav_services"
                        id="link-services">
                         الخدمات
                     </a>
 
-                    <a href="/packages"
+                    <a href="packages.html"
                        data-i18n="nav_packages"
                        id="link-packages">
                         الباقات والحجز
@@ -172,25 +172,25 @@ document.getElementById('site-header').innerHTML = `
             ✕
         </button>
 
-        <a href="/"
+        <a href="index.html"
            onclick="toggleFullscreenMenu()"
            data-i18n="nav_home">
             الرئيسية
         </a>
 
-        <a href="/works"
+        <a href="works.html"
            onclick="toggleFullscreenMenu()"
            data-i18n="nav_works">
             المعرض
         </a>
 
-        <a href="/services"
+        <a href="services.html"
            onclick="toggleFullscreenMenu()"
            data-i18n="nav_services">
             الخدمات
         </a>
 
-        <a href="/packages"
+        <a href="packages.html"
            onclick="toggleFullscreenMenu()"
            data-i18n="nav_packages">
             الباقات والحجز
@@ -234,7 +234,7 @@ document.getElementById('site-footer').innerHTML = `
     </a>
 `;
 const currentPage =
-    window.location.pathname.replace(/\/+$/, '').split('/').pop() || 'index';
+    window.location.pathname.split('/').pop() || 'index.html';
 
 if (currentPage.includes('index')) {
     document.getElementById('link-index')?.classList.add('active');
@@ -843,6 +843,22 @@ function selectPackage(packageName) {
         });
     }
 }
+function enableBasicClientDeterrents() {
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    document.addEventListener('keydown', event => {
+        const key = event.key.toLowerCase();
+        const blockedShortcut =
+            event.key === 'F12' ||
+            (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+            (event.ctrlKey && key === 'u');
+
+        if (blockedShortcut) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+}
 function reportVisit() {
     fetch('/api/log', {
         method: 'POST',
@@ -862,6 +878,7 @@ function reportVisit() {
 function initializeWebsite() {
     adjustQuickBookingPosition();
     applyTranslations();
+    enableBasicClientDeterrents();
     reportVisit();
 }
 if (document.readyState === 'loading') {
