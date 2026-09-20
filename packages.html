@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="saudi">
+<html lang="ar" dir="rtl" data-theme="relax">
 <head>
     <script>
         try {
-            const savedTheme = localStorage.getItem('site_theme');
-            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
-                document.documentElement.setAttribute('data-theme', savedTheme);
+            const validThemes = ['saudi', 'relax', 'dark', 'light'];
+            const initialized = localStorage.getItem('site_theme_initialized');
+
+
+            if (initialized !== '1') {
+                localStorage.setItem('site_theme', 'relax');
+                localStorage.setItem('theme_label_ar', 'الوضع الهادئ 🍃');
+                localStorage.setItem('theme_label_en', 'Relax');
+                localStorage.setItem('site_theme_initialized', '1');
             }
-        } catch (_) {}
+
+            const savedTheme = localStorage.getItem('site_theme');
+            const initialTheme = validThemes.includes(savedTheme) ? savedTheme : 'relax';
+            document.documentElement.setAttribute('data-theme', initialTheme);
+        } catch (_) {
+            document.documentElement.setAttribute('data-theme', 'relax');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <title>5lo photography | الباقات والحجز</title>
+    <title>الباقات والحجز | Cinematic Car Photographer 🎥</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;1000;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="top">
@@ -34,28 +46,40 @@
                         <span class="badge" style="margin-bottom: 12px;" data-i18n="pkg1_badge">01 / البداية</span>
                         <h3 style="font-size: 19px;" data-i18n="pkg1_title">رولينق بدون مونتاج</h3>
                         <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;" data-i18n="pkg1_desc">تصوير رولينق فقط وتسليم المقاطع الأصلية.</p>
-                        <p style="font-size: 34px; font-weight: 900; margin: 20px 0 16px;">70 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);" data-i18n="currency">ر.س</span></p>
+                        <p style="font-size: 34px; font-weight: 900; margin: 20px 0 16px;">100 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);" data-i18n="currency">ر.س</span></p>
                         <ul style="font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
                             <li data-i18n="pkg1_f1">✓ تصوير رولينق فقط.</li>
                             <li data-i18n="pkg1_f2">✓ تسليم الملفات الأصلية.</li>
                         </ul>
                     </div>
-                    <button type="button" class="btn-outline" style="width: 100%; justify-content: center; margin-top: 24px;" onclick="selectPackage('رولينق بدون مونتاج (70 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
+                    <button type="button" class="btn-outline" style="width: 100%; justify-content: center; margin-top: 24px;" onclick="selectPackage('رولينق بدون مونتاج (100 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
                 </div>
                 
-                <div class="card featured">
+                <div class="card featured" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 8px; left: 16px; background: var(--bg-primary); color: var(--accent); padding: 7px 11px; border-radius: 999px; font-size: 12px; font-weight: 900; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,.15);" data-i18n="pkg2_discount">
+                        خصم 36%
+                    </div>
                     <div>
                         <span class="badge" style="margin-bottom: 12px;" data-i18n="pkg2_badge">02 / الأكثر طلباً</span>
                         <h3 style="font-size: 19px;" data-i18n="pkg2_title">رولينق + مونتاج</h3>
                         <p style="font-size: 13px; margin-top: 6px;" data-i18n="pkg2_desc">تغطية متحركة بإيقاع احترافي وجاهزة للنشر.</p>
-                        <p style="font-size: 34px; font-weight: 900; margin: 20px 0 16px;">120 <span style="font-size: 14px; font-weight: 400;" data-i18n="currency">ر.س</span></p>
-                        <ul style="font-size: 13px; display: flex; flex-direction: column; gap: 8px; font-weight: 500;">
+
+                        <div style="margin: 20px 0 16px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                            <span style="font-size: 18px; color: rgba(12,20,31,.58); text-decoration: line-through; text-decoration-thickness: 2px;">
+                                150 <span style="font-size: 12px; text-decoration: none;">ر.س</span>
+                            </span>
+                            <span style="font-size: 40px; font-weight: 900; color: var(--bg-primary); line-height: 1;">
+                                96 <span style="font-size: 14px; font-weight: 700; color: var(--bg-primary);">ر.س</span>
+                            </span>
+                        </div>
+
+                        <ul style="font-size: 13px; display: flex; flex-direction: column; gap: 8px; font-weight: 600; color: var(--bg-primary);">
                             <li data-i18n="pkg2_f1">✓ تصوير رولينق + 10 مقاطع</li>
                             <li data-i18n="pkg2_f2">✓ مونتاج احترافي مع مؤثرات صوتية</li>
                             <li data-i18n="pkg2_f3">✓ 3 صور بتعديل مميز</li>
                         </ul>
                     </div>
-                    <button type="button" class="btn-dark" onclick="selectPackage('رولينق + مونتاج (120 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
+                    <button type="button" class="btn-dark" onclick="selectPackage('رولينق + مونتاج (96 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
                 </div>
 
                 <div class="card">
@@ -63,14 +87,14 @@
                         <span class="badge" style="margin-bottom: 12px;" data-i18n="pkg3_badge">03 / التغطية الكاملة</span>
                         <h3 style="font-size: 19px;" data-i18n="pkg3_title">رولينق + ثابتة</h3>
                         <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;" data-i18n="pkg3_desc">إبراز السيارة أثناء الحركة والسكون في جلسة واحدة.</p>
-                        <p style="font-size: 34px; font-weight: 900; margin: 20px 0 16px;">200 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);" data-i18n="currency">ر.س</span></p>
+                        <p style="font-size: 34px; font-weight: 900; margin: 20px 0 16px;">250 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);" data-i18n="currency">ر.س</span></p>
                         <ul style="font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
                             <li data-i18n="pkg3_f1">✓ تصوير رولينق وثابتة</li>
                             <li data-i18n="pkg3_f2">✓ مونتاج متكامل</li>
-                            <li data-i18n="pkg3_f3">✓ 8 صور معدلة باحترافية</li>
+                            <li data-i18n="pkg3_f3">✓ +5 صور معدلة باحترافية</li>
                         </ul>
                     </div>
-                    <button type="button" class="btn-outline" style="width: 100%; justify-content: center; margin-top: 24px;" onclick="selectPackage('رولينق + ثابتة (200 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
+                    <button type="button" class="btn-outline" style="width: 100%; justify-content: center; margin-top: 24px;" onclick="selectPackage('رولينق + ثابتة (250 ر.س)')" data-i18n="pkg_btn">احجز الباقة</button>
                 </div>
 
                 <div class="card">
@@ -99,7 +123,7 @@
                 <h2 class="sec-title" style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 900; letter-spacing: -1px; margin-top: 8px;"><span data-i18n="contact_t1">جاهز تخلي سيارتك</span> <span style="color: var(--accent);" data-i18n="contact_t2">تُرى؟</span></h2>
                 <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 24px;" data-i18n="contact_desc">أرسل لنا نوع سيارتك، موقعك، وما تتخيله. سنعود لك في أقرب وقت لتأكيد الموعد.</p>
                 
-                <p style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">
+                <p style="font-size: 15px; font-weight: 1000; margin-bottom: 8px;">
                     <span data-i18n="contact_whatsapp">واتساب:</span> <a href="https://wa.me/966597561765?text=مرحباً، أود حجز موعد لتصوير سيارتي" target="_blank" style="color: var(--accent); text-decoration: none; unicode-bidi: isolate; direction: ltr; display: inline-block;">+966 59 756 1765</a>
                 </p>
                 <p style="font-size: 15px; color: var(--text-muted);">
@@ -152,9 +176,9 @@
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_pkg">نوع الباقة أو الطلب
                             <select id="packageSelect" class="input-box" required>
                                 <option value="" disabled selected data-i18n="form_select">اختر الباقة المناسبة</option>
-                                <option value="رولينق بدون مونتاج (70 ر.س)" data-i18n="pkg_option_1">رولينق بدون مونتاج (70 ر.س)</option>
-                                <option value="رولينق + مونتاج (120 ر.س)" data-i18n="pkg_option_2">رولينق + مونتاج (120 ر.س)</option>
-                                <option value="رولينق + ثابتة (200 ر.س)" data-i18n="pkg_option_3">رولينق + ثابتة (200 ر.س)</option>
+                                <option value="رولينق بدون مونتاج (100 ر.س)" data-i18n="pkg_option_1">رولينق بدون مونتاج (100 ر.س)</option>
+                                <option value="رولينق + مونتاج (96 ر.س)" data-i18n="pkg_option_2">رولينق + مونتاج (96 ر.س)</option>
+                                <option value="رولينق + ثابتة (250 ر.س)" data-i18n="pkg_option_3">رولينق + ثابتة (250 ر.س)</option>
                                 <option value="التصوير السينمائي (450 ر.س)" data-i18n="pkg_option_4">التصوير السينمائي (450 ر.س)</option>
                             </select>
                         </label>
@@ -240,7 +264,7 @@
             }
 
             const message = currentLang === 'ar'
-                ? `مرحباً 5lo Studio، أرغب بحجز موعد:\n` +
+                ? `مرحباً Cinematic Car Photographer ، أرغب بحجز موعد:\n` +
                   `- الاسم: ${name}\n` +
                   `- رقم التواصل: ${phone}\n` +
                   `- المدينة: ${city}\n` +
@@ -248,7 +272,7 @@
                   `- الماركة والموديل: ${vehicleModel}\n` +
                   `- الباقة: ${pkg}\n` +
                   `- التفاصيل: ${details}`
-                : `Hello 5lo Studio, I would like to book a session:\n` +
+                : `Hello Cinematic Car Photographer  , I would like to book a session:\n` +
                   `- Name: ${name}\n` +
                   `- Phone: ${phone}\n` +
                   `- City: ${city}\n` +
