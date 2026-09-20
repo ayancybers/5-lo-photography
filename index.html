@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="saudi">
+<html lang="ar" dir="rtl" data-theme="relax">
 <head>
     <script>
         try {
-            const savedTheme = localStorage.getItem('site_theme');
-            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
-                document.documentElement.setAttribute('data-theme', savedTheme);
+            const validThemes = ['saudi', 'relax', 'dark', 'light'];
+            const initialized = localStorage.getItem('site_theme_initialized');
+
+
+            if (initialized !== '1') {
+                localStorage.setItem('site_theme', 'relax');
+                localStorage.setItem('theme_label_ar', 'الوضع الهادئ 🍃');
+                localStorage.setItem('theme_label_en', 'Relax');
+                localStorage.setItem('site_theme_initialized', '1');
             }
-        } catch (_) {}
+
+            const savedTheme = localStorage.getItem('site_theme');
+            const initialTheme = validThemes.includes(savedTheme) ? savedTheme : 'relax';
+            document.documentElement.setAttribute('data-theme', initialTheme);
+        } catch (_) {
+            document.documentElement.setAttribute('data-theme', 'relax');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5lo Studio — استوديو تصوير السيارات</title>
+    <title>Cinematic Car Photographer 🎥 — استوديو تصوير السيارات</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -28,7 +40,7 @@
     <main>
         <section class="hero-section">
             <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-                <source src="work/video1.mp4" data-asset="video1" type="video/mp4">
+                <source src="https://e.top4top.io/m_3914dpfih6.mp4" type="video/mp4">
             </video>
             <div class="container">
                 <span class="badge" data-i18n="hero_badge">استوديو تصوير السيارات — الدمام، الخبر، والقطيف</span>
@@ -57,7 +69,7 @@
             <div id="loader-wrapper">
                 <div class="loader-content">
                     <div class="loader-circle"></div>
-                    <img src="work/logo.png" data-asset="logo" alt="5lo Studio" class="loader-logo">
+                    <img src="https://l.top4top.io/p_391495qim1.png" alt="Cinematic Car Photographer 🎥" class="loader-logo">
                 </div>
                 <div class="loader-info">
                     <div class="loader-percentage" id="loaderPercentage">0%</div>
