@@ -308,10 +308,6 @@ const translations = {
         sec1_badge: 'المشهد الأول / الأعمال',
         sec1_t1: 'التفاصيل ليست',
         sec1_t2: 'تفصيلاً.',
-        work1: 'إيقاع الطريق والسرعة',
-        work2: 'زوايا دقيقة وإضاءة مدروسة',
-        work3: 'ملامح القوة والفخامة',
-        work4: 'الإنتاج البصري المتكامل',
         photo_badge_1: '01 / صور ثابتة',
         photo_title_1: 'لقطة إضافية 1',
         photo_badge_2: '02 / صور ثابتة',
@@ -429,10 +425,6 @@ const translations = {
         sec1_badge: 'Scene 1 / Works',
         sec1_t1: 'Details are not',
         sec1_t2: 'just details.',
-        work1: 'Road Rhythm & Speed',
-        work2: 'Precise Angles & Lighting',
-        work3: 'Power & Luxury Features',
-        work4: 'Full Visual Production',
         photo_badge_1: '01 / Still Photo',
         photo_title_1: 'Extra Shot 1',
         photo_badge_2: '02 / Still Photo',
@@ -525,8 +517,7 @@ const translations = {
 
 let currentLang = localStorage.getItem('site_lang') || 'ar';
 
-// Default theme for the first visit after this update: Relax.
-// The visitor's later theme choice is preserved.
+
 const validThemes = ['saudi', 'relax', 'dark', 'light'];
 const themeInitialized = localStorage.getItem('site_theme_initialized');
 
@@ -710,6 +701,52 @@ function selectPackage(packageName) {
     }
 }
 
+
+
+function forceVideoAutoplay() {
+    const videos = document.querySelectorAll('video');
+
+    videos.forEach(video => {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+
+        const playNow = () => {
+            const promise = video.play();
+            if (promise && typeof promise.catch === 'function') {
+                promise.catch(() => {});
+            }
+        };
+
+        if (video.readyState >= 2) {
+            playNow();
+        } else {
+            video.addEventListener('loadeddata', playNow, { once: true });
+            video.addEventListener('canplay', playNow, { once: true });
+        }
+    });
+
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting && video.paused) {
+                    const promise = video.play();
+                    if (promise && typeof promise.catch === 'function') {
+                        promise.catch(() => {});
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        videos.forEach(video => observer.observe(video));
+    }
+}
+
+
 function enableBasicClientDeterrents() {
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', event => {
@@ -740,6 +777,7 @@ function reportVisit() {
 function initializeWebsite() {
     adjustQuickBookingPosition();
     applyTranslations();
+    forceVideoAutoplay();
     enableBasicClientDeterrents();
     reportVisit();
 }
