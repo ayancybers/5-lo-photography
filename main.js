@@ -7,25 +7,20 @@ document.getElementById('site-header').innerHTML = `
 
     <header>
         <div class="container nav-container">
-
-            
             <div class="logo-wrapper">
                 <a href="index.html" class="logo">
-                    5lo <span>Studio</span>
+                    5lo <span>Photographer</span>
                 </a>
 
                 <img
-                    src="work/logo.png"
-                    data-asset="logo"
-                    alt="5lo Studio"
+                    src="https://l.top4top.io/p_391495qim1.png"
+                    alt="Cinematic Car Photographer 🎥"
                     class="logo-img"
                     onerror="this.style.display='none'"
                 >
             </div>
 
                 <div class="nav-controls" id="navControlsContainer">
-
-                    
                     <a href="packages.html#contact"
                        class="btn-main"
                        id="quickBookingBtn"
@@ -81,7 +76,6 @@ document.getElementById('site-header').innerHTML = `
                         </button>
 
                         <div class="dropdown-menu" id="themeDropdown">
-
                             <button
                                 type="button"
                                 class="dropdown-item"
@@ -124,7 +118,6 @@ document.getElementById('site-header').innerHTML = `
                         </div>
                     </div>
 
-                    
                     <button
                         type="button"
                         class="menu-trigger"
@@ -132,10 +125,8 @@ document.getElementById('site-header').innerHTML = `
                         ☰
                         <span data-i18n="menu_btn">القائمة</span>
                     </button>
-
                 </div>
 
-            
             <nav class="nav-links">
                     <a href="index.html"
                        data-i18n="nav_home"
@@ -165,7 +156,6 @@ document.getElementById('site-header').innerHTML = `
     </header>
 
     <div class="fullscreen-menu" id="fullscreenMenu">
-
         <button
             type="button"
             class="close-menu"
@@ -198,10 +188,10 @@ document.getElementById('site-header').innerHTML = `
         </a>
     </div>
 `;
+
 document.getElementById('site-footer').innerHTML = `
     <footer>
         <div class="container footer-flex">
-
             <p>
                 © 2026 5lo Photographer.
                 <span data-i18n="footer_rights">
@@ -221,37 +211,73 @@ document.getElementById('site-footer').innerHTML = `
                     العودة للأعلى ↑
                 </a>
             </div>
-
         </div>
     </footer>
 
-    <a
-        href="https://wa.me/966597561765"
-        class="wa-float"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="واتساب">
-        💬
-    </a>
+    <div class="social-float" id="socialFloat">
+        <div class="social-menu" id="socialMenu" aria-hidden="true">
+            <a
+                href="https://wa.me/966597561765?text=مرحباً، أود الاستفسار عن خدمات Cinematic Car Photographer 🎥"
+                class="social-option whatsapp-option"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="social_whatsapp"
+                aria-label="واتساب">
+                <span class="social-option-icon">💬</span>
+                <span>واتساب</span>
+            </a>
+
+            <a
+                href="https://instagram.com/5lo.63"
+                class="social-option instagram-option"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="social_instagram"
+                aria-label="انستقرام">
+                <span class="social-option-icon">◎</span>
+                <span>انستقرام</span>
+            </a>
+
+            <a
+                href="https://www.tiktok.com/@xzlav.1"
+                class="social-option tiktok-option"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="social_tiktok"
+                aria-label="تيك توك">
+                <span class="social-option-icon">♪</span>
+                <span>تيك توك</span>
+            </a>
+        </div>
+
+        <button
+            type="button"
+            class="wa-float social-toggle"
+            id="socialToggle"
+            onclick="toggleSocialMenu(event)"
+            aria-expanded="false"
+            aria-controls="socialMenu"
+            aria-label="التواصل الاجتماعي">
+            💬
+        </button>
+    </div>
 `;
-const currentPage =
-    window.location.pathname.split('/').pop() || 'index.html';
+
+const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
 if (currentPage.includes('index')) {
     document.getElementById('link-index')?.classList.add('active');
 }
-
 if (currentPage.includes('works')) {
     document.getElementById('link-works')?.classList.add('active');
 }
-
 if (currentPage.includes('services')) {
     document.getElementById('link-services')?.classList.add('active');
 }
-
 if (currentPage.includes('packages')) {
     document.getElementById('link-packages')?.classList.add('active');
 }
+
 const translations = {
     ar: {
         nav_home: 'الرئيسية',
@@ -260,133 +286,85 @@ const translations = {
         nav_packages: 'الباقات والحجز',
         menu_btn: 'القائمة',
         quick_booking: 'حجز سريع',
-
-        announcement_text:
-            '💚 عروض اليوم الوطني 96: خصم خاص على الباقة الملكية لتصبح بـ 196 ريال فقط! كل عام ووطنا بخير',
-
+        social_whatsapp: 'واتساب',
+        social_instagram: 'انستقرام',
+        social_tiktok: 'تيك توك',
+        announcement_text: '💚 عروض اليوم الوطني 96: خصم خاص على الباقة الملكية لتصبح بـ 196 ريال فقط! كل عام ووطنا بخير',
         theme_saudi: 'اليوم الوطني السعودي 💚',
         theme_relax: 'الوضع الهادئ 🍃',
         theme_dark: 'الوضع الداكن 🌙',
         theme_light: 'المود الفاتح ☀️',
-
         filter_all: 'الكل',
         filter_videos: 'فيديوهات',
         filter_photos: 'صور',
-
-        load_msg_1:
-            'جاري تهيئة الاستوديو وتحميل عناصر الصفحة...',
-
-        load_msg_2:
-            'جاري تجهيز مقاطع الفيديو والسينمائيات...',
-
-        load_msg_3:
-            'كل شيء جاهز تقريباً، استعد للانطلاق! 🚀',
-
-        hero_badge:
-            'استوديو تصوير السيارات — الدمام، الخبر، والقطيف',
-
-        hero_title:
-            'خلِّ سيارتك <span style="color: var(--accent);">تتحرك</span> حتى وهي ثابتة.',
-
-        hero_desc:
-            'نصنع للسيارات حضوراً يُرى ويُحس. صورة دقيقة، فيلم قصير بإيقاعه، وذاكرة تستحق أن تُحفظ.',
-
+        load_msg_1: 'جاري تهيئة الاستوديو وتحميل عناصر الصفحة...',
+        load_msg_2: 'جاري تجهيز مقاطع الفيديو والسينمائيات...',
+        load_msg_3: 'كل شيء جاهز تقريباً، استعد للانطلاق! 🚀',
+        hero_badge: 'استوديو تصوير السيارات — الدمام، الخبر، والقطيف',
+        hero_title: 'خلِّ سيارتك <span style="color: var(--accent);">تتحرك</span> حتى وهي ثابتة.',
+        hero_desc: 'نصنع للسيارات حضوراً يُرى ويُحس. صورة دقيقة، فيلم قصير بإيقاعه، وذاكرة تستحق أن تُحفظ.',
         btn_start: 'ابدأ مشروعك',
         btn_works: 'استعرض الأعمال',
-
         sec1_badge: 'المشهد الأول / الأعمال',
         sec1_t1: 'التفاصيل ليست',
         sec1_t2: 'تفصيلاً.',
-
         work1: 'إيقاع الطريق والسرعة',
         work2: 'زوايا دقيقة وإضاءة مدروسة',
         work3: 'ملامح القوة والفخامة',
         work4: 'الإنتاج البصري المتكامل',
-
         photo_badge_1: '01 / صور ثابتة',
         photo_title_1: 'لقطة إضافية 1',
-
         photo_badge_2: '02 / صور ثابتة',
         photo_title_2: 'لقطة إضافية 2',
-
         photo_badge_3: '03 / صور ثابتة',
         photo_title_3: 'لقطة إضافية 3',
-
         photo_badge_4: '04 / صور ثابتة',
         photo_title_4: 'لقطة إضافية 4',
-
         sec2_badge: 'المشهد الثاني / ماذا نصنع',
         sec2_t1: 'من اللمعة الأولى إلى',
         sec2_t2: 'آخر فريم.',
-
         serv1_title: 'تصوير فوتوغرافي',
-        serv1_desc:
-            'صور خارجية وداخلية، لقطات تفصيلية، وبورتريه للسيارة بإضاءة احترافية.',
-
+        serv1_desc: 'صور خارجية وداخلية، لقطات تفصيلية، وبورتريه للسيارة بإضاءة احترافية.',
         serv2_title: 'فيديو سينمائي',
-        serv2_desc:
-            'فيلم قصير يترجم شخصية سيارتك إلى حركة، صوت، وإيقاع يعلق في الذاكرة.',
-
+        serv2_desc: 'فيلم قصير يترجم شخصية سيارتك إلى حركة، صوت، وإيقاع يعلق في الذاكرة.',
         serv3_title: 'محتوى السوشال',
-        serv3_desc:
-            'حزمة عمودية سريعة الإيقاع جاهزة للنشر، من الريلز إلى القصص والحملات.',
-
+        serv3_desc: 'حزمة عمودية سريعة الإيقاع جاهزة للنشر، من الريلز إلى القصص والحملات.',
         serv4_title: 'تغطية الفعاليات',
-        serv4_desc:
-            'نوثق تجمعك أو فعاليتك كما حدثت تماماً بكل تفاصيلها وحماسها.',
-
+        serv4_desc: 'نوثق تجمعك أو فعاليتك كما حدثت تماماً بكل تفاصيلها وحماسها.',
         sec3_badge: 'المشهد الثالث / اختر إيقاعك',
         sec3_t1: 'باقات واضحة.',
         sec3_t2: 'نتيجة لا تُنسى.',
-
         currency: 'ر.س',
         pkg_btn: 'احجز الباقة',
-
         pkg1_badge: '01 / البداية',
         pkg1_title: 'رولينق بدون مونتاج',
-        pkg1_desc:
-            'تصوير رولينق فقط وتسليم المقاطع الأصلية.',
-
+        pkg1_desc: 'تصوير رولينق فقط وتسليم المقاطع الأصلية.',
         pkg1_f1: '✓ تصوير رولينق فقط.',
         pkg1_f2: '✓ تسليم الملفات الأصلية.',
-
         pkg2_badge: '02 / الأكثر طلباً',
         pkg2_title: 'رولينق + مونتاج',
-        pkg2_desc:
-            'تغطية متحركة بإيقاع احترافي وجاهزة للنشر.',
-
+        pkg2_desc: 'تغطية متحركة بإيقاع احترافي وجاهزة للنشر.',
         pkg2_f1: '✓ تصوير رولينق + 10 مقاطع',
         pkg2_f2: '✓ مونتاج احترافي مع مؤثرات صوتية',
         pkg2_f3: '✓ 3 صور بتعديل مميز',
-
         pkg3_badge: '03 / التغطية الكاملة',
         pkg3_title: 'رولينق + ثابتة',
-        pkg3_desc:
-            'إبراز السيارة أثناء الحركة والسكون في جلسة واحدة.',
-
+        pkg3_desc: 'إبراز السيارة أثناء الحركة والسكون في جلسة واحدة.',
         pkg3_f1: '✓ تصوير رولينق وثابتة',
         pkg3_f2: '✓ مونتاج متكامل',
-        pkg3_f3: '✓ 8 صور معدلة باحترافية',
-
+        pkg3_f3: '✓ +5 صور معدلة باحترافية',
         pkg4_badge: '04 / الإنتاج الكامل',
         pkg4_title: 'التصوير السينمائي',
-        pkg4_desc:
-            'فكرة إبداعية متكاملة من الزاوية الأولى إلى الإخراج النهائي.',
-
+        pkg4_desc: 'فكرة إبداعية متكاملة من الزاوية الأولى إلى الإخراج النهائي.',
         pkg4_f1: '✓ تصوير سينمائي متكامل',
         pkg4_f2: '✓ زوايا وأفكار خاصة',
         pkg4_f3: '✓ مونتاج سينمائي عالي الجودة',
-
         contact_badge: 'المشهد الأخير / لنبدأ',
         contact_t1: 'جاهز تخلي سيارتك',
         contact_t2: 'تُرى؟',
-
-        contact_desc:
-            'أرسل لنا نوع سيارتك، موقعك، وما تتخيله. سنعود لك في أقرب وقت لتأكيد الموعد.',
-
+        contact_desc: 'أرسل لنا نوع سيارتك، موقعك، وما تتخيله. سنعود لك في أقرب وقت لتأكيد الموعد.',
         contact_whatsapp: 'واتساب:',
         contact_instagram: 'انستقرام:',
-
         form_name: 'الاسم',
         form_name_placeholder: 'كيف نناديك؟',
         form_phone: 'رقم التواصل',
@@ -418,12 +396,10 @@ const translations = {
         form_details: 'تفاصيل إضافية',
         form_details_placeholder: 'نوع السيارة، ملاحظاتك...',
         form_submit: 'إرسال عبر الواتساب ←',
-
         footer_rights: 'جميع الحقوق محفوظة.',
         footer_loc: 'الدمام / الخبر / القطيف',
         footer_top: 'العودة للأعلى ↑'
     },
-
     en: {
         nav_home: 'Home',
         nav_works: 'Gallery',
@@ -431,133 +407,85 @@ const translations = {
         nav_packages: 'Packages & Booking',
         menu_btn: 'Menu',
         quick_booking: 'Quick Booking',
-
-        announcement_text:
-            '💚 SA National Day 96 Offers: Special discount on the Royal Package for only 196 SAR! Happy National Day',
-
+        social_whatsapp: 'WhatsApp',
+        social_instagram: 'Instagram',
+        social_tiktok: 'TikTok',
+        announcement_text: '💚 SA National Day 96 Offers: Special discount on the Royal Package for only 196 SAR! Happy National Day',
         theme_saudi: 'Saudi National Day 96',
         theme_relax: 'Relax',
         theme_dark: 'Dark',
         theme_light: 'Light Mode ☀️',
-
         filter_all: 'All',
         filter_videos: 'Videos',
         filter_photos: 'Photos',
-
-        load_msg_1:
-            'Initializing studio and loading page elements...',
-
-        load_msg_2:
-            'Preparing cinematic videos and footage...',
-
-        load_msg_3:
-            'Almost ready, get ready to launch! 🚀',
-
-        hero_badge:
-            'Automotive photographer — Dammam, Khobar, & Qatif',
-
-        hero_title:
-            'Make your car <span style="color: var(--accent);">move</span> while staying still.',
-
-        hero_desc:
-            'We give cars a living presence. Precise photography, rhythmic short films, and timeless memories.',
-
+        load_msg_1: 'Initializing studio and loading page elements...',
+        load_msg_2: 'Preparing cinematic videos and footage...',
+        load_msg_3: 'Almost ready, get ready to launch! 🚀',
+        hero_badge: 'Automotive photographer — Dammam, Khobar, & Qatif',
+        hero_title: 'Make your car <span style="color: var(--accent);">move</span> while staying still.',
+        hero_desc: 'We give cars a living presence. Precise photography, rhythmic short films, and timeless memories.',
         btn_start: 'Start Project',
         btn_works: 'View Works',
-
         sec1_badge: 'Scene 1 / Works',
         sec1_t1: 'Details are not',
         sec1_t2: 'just details.',
-
         work1: 'Road Rhythm & Speed',
         work2: 'Precise Angles & Lighting',
         work3: 'Power & Luxury Features',
         work4: 'Full Visual Production',
-
         photo_badge_1: '01 / Still Photo',
         photo_title_1: 'Extra Shot 1',
-
         photo_badge_2: '02 / Still Photo',
         photo_title_2: 'Extra Shot 2',
-
         photo_badge_3: '03 / Still Photo',
         photo_title_3: 'Extra Shot 3',
-
         photo_badge_4: '04 / Still Photo',
         photo_title_4: 'Extra Shot 4',
-
         sec2_badge: 'Scene 2 / What We Do',
         sec2_t1: 'From the first gloss to',
         sec2_t2: 'the final frame.',
-
         serv1_title: 'Photography',
-        serv1_desc:
-            'Exterior & interior shots, detail clips, and car portraits with professional lighting.',
-
+        serv1_desc: 'Exterior & interior shots, detail clips, and car portraits with professional lighting.',
         serv2_title: 'Cinematic Video',
-        serv2_desc:
-            'A short film translating the car character into motion, sound, and memorable rhythm.',
-
+        serv2_desc: 'A short film translating the car character into motion, sound, and memorable rhythm.',
         serv3_title: 'Social Content',
-        serv3_desc:
-            'Fast-paced vertical packages ready to publish, from reels to stories and campaigns.',
-
+        serv3_desc: 'Fast-paced vertical packages ready to publish, from reels to stories and campaigns.',
         serv4_title: 'Event Coverage',
-        serv4_desc:
-            'Documenting your gathering or event exactly as it happened with all details and excitement.',
-
+        serv4_desc: 'Documenting your gathering or event exactly as it happened with all details and excitement.',
         sec3_badge: 'Scene 3 / Choose Your Rhythm',
         sec3_t1: 'Clear packages.',
         sec3_t2: 'Unforgettable results.',
-
         currency: 'SAR',
         pkg_btn: 'Book Package',
-
         pkg1_badge: '01 / Beginning',
         pkg1_title: 'Rolling w/o Edit',
-        pkg1_desc:
-            'Rolling shots only with original files delivered.',
-
+        pkg1_desc: 'Rolling shots only with original files delivered.',
         pkg1_f1: '✓ Rolling shots only.',
         pkg1_f2: '✓ Original files delivery.',
-
         pkg2_badge: '02 / Most Popular',
         pkg2_title: 'Rolling + Edit',
-        pkg2_desc:
-            'Dynamic coverage with professional rhythm, ready to publish.',
-
+        pkg2_desc: 'Dynamic coverage with professional rhythm, ready to publish.',
         pkg2_f1: '✓ Rolling shots + 10 clips',
         pkg2_f2: '✓ Pro editing with sound effects',
         pkg2_f3: '✓ 3 custom-edited photos',
-
         pkg3_badge: '03 / Full Coverage',
         pkg3_title: 'Rolling + Static',
-        pkg3_desc:
-            'Highlighting the car in motion and stillness in one session.',
-
+        pkg3_desc: 'Highlighting the car in motion and stillness in one session.',
         pkg3_f1: '✓ Rolling & static shots',
         pkg3_f2: '✓ Complete editing',
-        pkg3_f3: '✓ 8 professionally edited photos',
-
+        pkg3_f3: '✓ +5 professionally edited photos',
         pkg4_badge: '04 / Full Production',
         pkg4_title: 'Cinematic Production',
-        pkg4_desc:
-            'A complete creative concept from the first angle to final direction.',
-
+        pkg4_desc: 'A complete creative concept from the first angle to final direction.',
         pkg4_f1: '✓ Full cinematic coverage',
         pkg4_f2: '✓ Special angles & concepts',
         pkg4_f3: '✓ High-quality cinematic edit',
-
         contact_badge: "Final Scene / Let's Start",
         contact_t1: 'Ready to make your car',
         contact_t2: 'seen?',
-
-        contact_desc:
-            'Send us your car model, location, and your vision. We will get back to you promptly to confirm the appointment.',
-
+        contact_desc: 'Send us your car model, location, and your vision. We will get back to you promptly to confirm the appointment.',
         contact_whatsapp: 'WhatsApp:',
         contact_instagram: 'Instagram:',
-
         form_name: 'Name',
         form_name_placeholder: 'What should we call you?',
         form_phone: 'Phone Number',
@@ -589,230 +517,147 @@ const translations = {
         form_details: 'Additional Details',
         form_details_placeholder: 'Car model, your notes...',
         form_submit: 'Send via WhatsApp ←',
-
         footer_rights: 'All rights reserved.',
         footer_loc: 'Dammam / Khobar / Qatif',
         footer_top: 'Back to top ↑'
     }
 };
-let currentLang =
-    localStorage.getItem('site_lang') || 'ar';
 
-let currentTheme =
-    localStorage.getItem('site_theme') || 'saudi';
+let currentLang = localStorage.getItem('site_lang') || 'ar';
 
-let currentThemeLabelAr =
-    localStorage.getItem('theme_label_ar') ||
-    'اليوم الوطني السعودي 💚';
+// Default theme for the first visit after this update: Relax.
+// The visitor's later theme choice is preserved.
+const validThemes = ['saudi', 'relax', 'dark', 'light'];
+const themeInitialized = localStorage.getItem('site_theme_initialized');
 
-let currentThemeLabelEn =
-    localStorage.getItem('theme_label_en') ||
-    'Saudi National Day 96';
+if (themeInitialized !== '1') {
+    localStorage.setItem('site_theme', 'relax');
+    localStorage.setItem('theme_label_ar', 'الوضع الهادئ 🍃');
+    localStorage.setItem('theme_label_en', 'Relax');
+    localStorage.setItem('site_theme_initialized', '1');
+}
+
+let currentTheme = localStorage.getItem('site_theme');
+if (!validThemes.includes(currentTheme)) {
+    currentTheme = 'relax';
+}
+
+let currentThemeLabelAr = localStorage.getItem('theme_label_ar') || 'الوضع الهادئ 🍃';
+let currentThemeLabelEn = localStorage.getItem('theme_label_en') || 'Relax';
+
 document.documentElement.setAttribute('lang', currentLang);
+document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+document.documentElement.setAttribute('data-theme', currentTheme);
 
-document.documentElement.setAttribute(
-    'dir',
-    currentLang === 'ar' ? 'rtl' : 'ltr'
-);
-
-document.documentElement.setAttribute(
-    'data-theme',
-    currentTheme
-);
 function toggleDropdown(event, dropdownId) {
     event.stopPropagation();
-
-    document
-        .querySelectorAll('.dropdown-menu')
-        .forEach(menu => {
-            if (menu.id !== dropdownId) {
-                menu.classList.remove('active');
-            }
-        });
-
-    document
-        .getElementById(dropdownId)
-        ?.classList.toggle('active');
-}
-window.addEventListener('click', () => {
-    document
-        .querySelectorAll('.dropdown-menu')
-        .forEach(menu => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu.id !== dropdownId) {
             menu.classList.remove('active');
-        });
+        }
+    });
+    document.getElementById(dropdownId)?.classList.toggle('active');
+}
+
+window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('active');
+    });
+    closeSocialMenu();
 });
+
+window.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+        closeSocialMenu();
+    }
+});
+
 function setTheme(themeName, labelAr, labelEn) {
     currentTheme = themeName;
     currentThemeLabelAr = labelAr;
     currentThemeLabelEn = labelEn;
-
-    localStorage.setItem(
-        'site_theme',
-        themeName
-    );
-
-    localStorage.setItem(
-        'theme_label_ar',
-        labelAr
-    );
-
-    localStorage.setItem(
-        'theme_label_en',
-        labelEn
-    );
-
-    document.documentElement.setAttribute(
-        'data-theme',
-        themeName
-    );
-
+    localStorage.setItem('site_theme', themeName);
+    localStorage.setItem('theme_label_ar', labelAr);
+    localStorage.setItem('theme_label_en', labelEn);
+    document.documentElement.setAttribute('data-theme', themeName);
     updateLabels();
 }
+
 function changeLanguage(lang) {
     currentLang = lang;
-
-    localStorage.setItem(
-        'site_lang',
-        lang
-    );
-
-    document.documentElement.setAttribute(
-        'lang',
-        lang
-    );
-
-    document.documentElement.setAttribute(
-        'dir',
-        lang === 'ar' ? 'rtl' : 'ltr'
-    );
+    localStorage.setItem('site_lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
     adjustQuickBookingPosition();
-
     applyTranslations();
 }
+
 function adjustQuickBookingPosition() {
-    const container =
-        document.getElementById('navControlsContainer');
-
-    const quickBtn =
-        document.getElementById('quickBookingBtn');
-
+    const container = document.getElementById('navControlsContainer');
+    const quickBtn = document.getElementById('quickBookingBtn');
     if (!container || !quickBtn) return;
-
     container.prepend(quickBtn);
 }
+
 function updateLabels() {
-    const themeLabel =
-        document.getElementById('currentThemeLabel');
-
-    const languageLabel =
-        document.getElementById('currentLangLabel');
-
-    const announcementText =
-        document.getElementById('announcementText');
+    const themeLabel = document.getElementById('currentThemeLabel');
+    const languageLabel = document.getElementById('currentLangLabel');
+    const announcementText = document.getElementById('announcementText');
 
     if (themeLabel) {
         const themeNames = {
-            saudi: {
-                ar: 'اليوم الوطني السعودي 💚',
-                en: 'Saudi National Day 96'
-            },
-            relax: {
-                ar: 'الوضع الهادئ 🍃',
-                en: 'Relax'
-            },
-            dark: {
-                ar: 'الوضع الداكن 🌙',
-                en: 'Dark'
-            },
-            light: {
-                ar: 'المود الفاتح ☀️',
-                en: 'Light Mode'
-            }
+            saudi: { ar: 'اليوم الوطني السعودي 💚', en: 'Saudi National Day 96' },
+            relax: { ar: 'الوضع الهادئ 🍃', en: 'Relax' },
+            dark: { ar: 'الوضع الداكن 🌙', en: 'Dark' },
+            light: { ar: 'المود الفاتح ☀️', en: 'Light Mode' }
         };
-
-        themeLabel.textContent =
-            themeNames[currentTheme]?.[currentLang] ||
-            (currentLang === 'ar'
-                ? currentThemeLabelAr
-                : currentThemeLabelEn);
+        themeLabel.textContent = themeNames[currentTheme]?.[currentLang] || (currentLang === 'ar' ? currentThemeLabelAr : currentThemeLabelEn);
     }
 
     if (languageLabel) {
-        languageLabel.textContent =
-            currentLang === 'ar'
-                ? 'العربية SA'
-                : 'English US';
+        languageLabel.textContent = currentLang === 'ar' ? 'العربية SA' : 'English US';
     }
 
     if (announcementText) {
-        announcementText.textContent =
-            translations[currentLang].announcement_text;
+        announcementText.textContent = translations[currentLang].announcement_text;
     }
 }
+
 function applyTranslations() {
-    document
-        .querySelectorAll('[data-i18n]')
-        .forEach(element => {
-            const key =
-                element.getAttribute('data-i18n');
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translatedText = translations[currentLang]?.[key];
+        if (!translatedText) return;
 
-            const translatedText =
-                translations[currentLang]?.[key];
-
-            if (!translatedText) return;
-
-            const formControl = element.querySelector(
-                'input, select, textarea'
-            );
-
-            if (formControl) {
-                const textNode = Array.from(element.childNodes)
-                    .find(node =>
-                        node.nodeType === Node.TEXT_NODE &&
-                        node.nodeValue.trim().length > 0
-                    );
-
-                if (textNode) {
-                    textNode.nodeValue = translatedText + '\n';
-                } else {
-                    element.insertBefore(
-                        document.createTextNode(translatedText + '\n'),
-                        element.firstChild
-                    );
-                }
+        const formControl = element.querySelector('input, select, textarea');
+        if (formControl) {
+            const textNode = Array.from(element.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0);
+            if (textNode) {
+                textNode.nodeValue = translatedText + '\n';
             } else {
-                element.innerHTML = translatedText;
+                element.insertBefore(document.createTextNode(translatedText + '\n'), element.firstChild);
             }
-        });
+        } else {
+            element.innerHTML = translatedText;
+        }
+    });
 
-    document
-        .querySelectorAll('[data-i18n-placeholder]')
-        .forEach(element => {
-            const key = element.getAttribute('data-i18n-placeholder');
-            const translatedText = translations[currentLang]?.[key];
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        const translatedText = translations[currentLang]?.[key];
+        if (translatedText) element.placeholder = translatedText;
+    });
 
-            if (translatedText) {
-                element.placeholder = translatedText;
-            }
-        });
+    document.querySelectorAll('[data-i18n-title]').forEach(element => {
+        const key = element.getAttribute('data-i18n-title');
+        const translatedText = translations[currentLang]?.[key];
+        if (translatedText) element.title = translatedText;
+    });
 
-    document
-        .querySelectorAll('[data-i18n-title]')
-        .forEach(element => {
-            const key = element.getAttribute('data-i18n-title');
-            const translatedText = translations[currentLang]?.[key];
-
-            if (translatedText) {
-                element.title = translatedText;
-            }
-        });
-
-    document
-        .querySelectorAll('input:not([type="tel"]), textarea, select')
-        .forEach(element => {
-            element.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            element.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
-        });
+    document.querySelectorAll('input:not([type="tel"]), textarea, select').forEach(element => {
+        element.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        element.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
+    });
 
     const phoneInput = document.getElementById('clientPhone');
     if (phoneInput) {
@@ -822,93 +667,65 @@ function applyTranslations() {
 
     updateLabels();
 }
+
+
+function toggleSocialMenu(event) {
+    event?.stopPropagation();
+
+    const wrapper = document.getElementById('socialFloat');
+    const menu = document.getElementById('socialMenu');
+    const toggle = document.getElementById('socialToggle');
+
+    if (!wrapper || !menu || !toggle) return;
+
+    const isOpen = wrapper.classList.toggle('social-open');
+
+    menu.setAttribute('aria-hidden', String(!isOpen));
+    toggle.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeSocialMenu() {
+    const wrapper = document.getElementById('socialFloat');
+    const menu = document.getElementById('socialMenu');
+    const toggle = document.getElementById('socialToggle');
+
+    if (!wrapper || !menu || !toggle) return;
+
+    wrapper.classList.remove('social-open');
+    menu.setAttribute('aria-hidden', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+}
+
 function toggleFullscreenMenu() {
-    document
-        .getElementById('fullscreenMenu')
-        ?.classList.toggle('active');
+    document.getElementById('fullscreenMenu')?.classList.toggle('active');
 }
+
 function selectPackage(packageName) {
-    const packageSelect =
-        document.getElementById('packageSelect');
+    const packageSelect = document.getElementById('packageSelect');
+    if (packageSelect) packageSelect.value = packageName;
 
-    if (packageSelect) {
-        packageSelect.value = packageName;
-    }
-
-    const contactSection =
-        document.getElementById('contact');
-
+    const contactSection = document.getElementById('contact');
     if (contactSection) {
-        contactSection.scrollIntoView({
-            behavior: 'smooth'
-        });
+        contactSection.scrollIntoView({ behavior: 'smooth' });
     }
 }
+
 function enableBasicClientDeterrents() {
     document.addEventListener('contextmenu', event => event.preventDefault());
-
     document.addEventListener('keydown', event => {
         const key = event.key.toLowerCase();
-        const blockedShortcut =
-            event.key === 'F12' ||
-            (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key)) ||
-            (event.ctrlKey && key === 'u');
-
+        const blockedShortcut = event.key === 'F12' || (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key)) || (event.ctrlKey && key === 'u');
         if (blockedShortcut) {
             event.preventDefault();
             event.stopPropagation();
         }
     }, true);
 }
-const ASSET_DEFAULTS = {
-    logo: 'work/logo.png',
-    photo1: 'work/photo1.png',
-    photo2: 'work/photo2.png',
-    photo3: 'work/photo3.png',
-    photo4: 'work/photo4.png',
-    photo5: 'work/photo5.png',
-    video1: 'work/video1.mp4',
-    video2: 'work/video2.mp4',
-    video3: 'work/video3.mp4',
-    video4: 'work/video4.mp4',
-    video5: 'work/video5.mp4'
-};
 
-async function loadAssetLinks() {
-    let assets = ASSET_DEFAULTS;
-
-    try {
-        const response = await fetch('assets.json', { cache: 'no-store' });
-        if (response.ok) {
-            const configuredAssets = await response.json();
-            assets = { ...ASSET_DEFAULTS, ...configuredAssets };
-        }
-    } catch (error) {
-        console.warn('Asset links could not be loaded:', error);
-    }
-
-    document.querySelectorAll('[data-asset]').forEach(element => {
-        const assetKey = element.getAttribute('data-asset');
-        const assetUrl = assets[assetKey];
-        if (!assetUrl || typeof assetUrl !== 'string') return;
-
-        element.src = assetUrl;
-
-        if (element.tagName === 'SOURCE' && element.parentElement) {
-            element.parentElement.load();
-            element.parentElement.play().catch(() => {});
-        } else if (element.tagName === 'VIDEO') {
-            element.load();
-            element.play().catch(() => {});
-        }
-    });
-}
 function reportVisit() {
     fetch('/api/log', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             userAgent: navigator.userAgent,
             page: window.location.pathname,
@@ -919,18 +736,16 @@ function reportVisit() {
         console.warn('Visit logging failed:', error);
     });
 }
+
 function initializeWebsite() {
     adjustQuickBookingPosition();
     applyTranslations();
     enableBasicClientDeterrents();
-    loadAssetLinks();
     reportVisit();
 }
+
 if (document.readyState === 'loading') {
-    window.addEventListener(
-        'DOMContentLoaded',
-        initializeWebsite
-    );
+    window.addEventListener('DOMContentLoaded', initializeWebsite);
 } else {
     initializeWebsite();
 }
