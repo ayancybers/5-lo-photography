@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         if (req.method === 'GET') {
             return res.status(200).json({
                 success: true,
-                service: '5lo Studio visitor logger'
+                service: '5lo Photographer visitor logger'
             });
         }
 
@@ -52,10 +52,10 @@ export default async function handler(req, res) {
 
         if (webhookUrl) {
             const discordPayload = {
-                username: '5lo Studio',
+                username: '5lo Photographer',
                 embeds: [
                     {
-                        title: '👀 زائر جديد — 5lo Studio',
+                        title: '👀 New Visitor',
                         description: 'تم تسجيل زيارة جديدة للموقع.',
                         color: 3718648,
                         fields: [
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
                             }
                         ],
                         footer: {
-                            text: '5lo Studio • Relax Theme'
+                            text: '5lo Photographer • Relax Theme'
                         },
                         timestamp: new Date().toISOString()
                     }
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
                 body: JSON.stringify(discordPayload)
             }).catch((error) => {
                 console.warn(
-                    '5lo Studio visitor webhook failed:',
+                    '5lo Photographer visitor webhook failed:',
                     error?.message || error
                 );
             });
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('5lo Studio visitor logger error:', error);
+        console.error('5lo Photographer visitor logger error:', error);
 
         return res.status(200).json({
             success: true
