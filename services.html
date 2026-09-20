@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="saudi">
+<html lang="ar" dir="rtl" data-theme="relax">
 <head>
     <script>
         try {
-            const savedTheme = localStorage.getItem('site_theme');
-            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
-                document.documentElement.setAttribute('data-theme', savedTheme);
+            const validThemes = ['saudi', 'relax', 'dark', 'light'];
+            const initialized = localStorage.getItem('site_theme_initialized');
+
+
+            if (initialized !== '1') {
+                localStorage.setItem('site_theme', 'relax');
+                localStorage.setItem('theme_label_ar', 'الوضع الهادئ 🍃');
+                localStorage.setItem('theme_label_en', 'Relax');
+                localStorage.setItem('site_theme_initialized', '1');
             }
-        } catch (_) {}
+
+            const savedTheme = localStorage.getItem('site_theme');
+            const initialTheme = validThemes.includes(savedTheme) ? savedTheme : 'relax';
+            document.documentElement.setAttribute('data-theme', initialTheme);
+        } catch (_) {
+            document.documentElement.setAttribute('data-theme', 'relax');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <title>5lo photography | الخدمات</title>
+    <title> الخدمات | Cinematic Car Photographer 🎥</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
