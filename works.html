@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="saudi">
+<html lang="ar" dir="rtl" data-theme="relax">
 <head>
     <script>
         try {
-            const savedTheme = localStorage.getItem('site_theme');
-            if (['saudi', 'relax', 'dark', 'light'].includes(savedTheme)) {
-                document.documentElement.setAttribute('data-theme', savedTheme);
+            const validThemes = ['saudi', 'relax', 'dark', 'light'];
+            const initialized = localStorage.getItem('site_theme_initialized');
+
+
+            if (initialized !== '1') {
+                localStorage.setItem('site_theme', 'relax');
+                localStorage.setItem('theme_label_ar', 'الوضع الهادئ 🍃');
+                localStorage.setItem('theme_label_en', 'Relax');
+                localStorage.setItem('site_theme_initialized', '1');
             }
-        } catch (_) {}
+
+            const savedTheme = localStorage.getItem('site_theme');
+            const initialTheme = validThemes.includes(savedTheme) ? savedTheme : 'relax';
+            document.documentElement.setAttribute('data-theme', initialTheme);
+        } catch (_) {
+            document.documentElement.setAttribute('data-theme', 'relax');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المعرض | 5lo Studio</title>
+    <title>المعرض | Cinematic Car Photographer 🎥</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -82,7 +94,7 @@
                     <!-- ===== VIDEO ITEMS: START ===== -->
                     <!-- Add new video cards below this line. Put each video in the work/ folder and keep data-category="video". -->
                     <div class="media-card" data-category="video">
-                        <video src="work/video1.mp4" data-asset="video1" muted loop autoplay playsinline></video>
+                        <video src="https://e.top4top.io/m_3914dpfih6.mp4" muted loop autoplay playsinline></video>
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="work1">إيقاع الطريق والسرعة</span>
                             <h3 style="font-size: 18px;" data-i18n="sec1_badge">Rolling Shots</h3>
@@ -91,7 +103,7 @@
 
                     
                     <div class="media-card" data-category="video">
-                        <video src="work/video2.mp4" data-asset="video2" muted loop autoplay playsinline></video>
+                        <video src="https://f.top4top.io/m_3914i1xyk7.mp4" muted loop autoplay playsinline></video>
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="work2">زوايا دقيقة وإضاءة مدروسة</span>
                             <h3 style="font-size: 18px;">Cinematic Cut</h3>
@@ -99,7 +111,7 @@
                     </div>
 
                     <div class="media-card" data-category="video">
-                        <video src="work/video3.mp4" data-asset="video3" muted loop autoplay playsinline></video>
+                        <video src="https://g.top4top.io/m_3914l1kdv8.mp4" muted loop autoplay playsinline></video>
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;">03 / فيديو</span>
                             <h3 style="font-size: 18px;">Automotive Film 3</h3>
@@ -107,7 +119,7 @@
                     </div>
 
                     <div class="media-card" data-category="video">
-                        <video src="work/video4.mp4" data-asset="video4" muted loop autoplay playsinline></video>
+                        <video src="https://h.top4top.io/m_3914w07wh9.mp4" muted loop autoplay playsinline></video>
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;">04 / فيديو</span>
                             <h3 style="font-size: 18px;">Automotive Film 4</h3>
@@ -115,7 +127,7 @@
                     </div>
 
                     <div class="media-card" data-category="video">
-                        <video src="work/video5.mp4" data-asset="video5" muted loop autoplay playsinline></video>
+                        <video src="https://i.top4top.io/m_3914r8evr10.mp4" muted loop autoplay playsinline></video>
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;">05 / فيديو</span>
                             <h3 style="font-size: 18px;">Automotive Film 5</h3>
@@ -127,7 +139,7 @@
                     <!-- ===== IMAGE ITEMS: START ===== -->
                     <!-- Add new image cards below this line. Put each image in the work/ folder and keep data-category="image". -->
                     <div class="media-card" data-category="image">
-                        <img src="work/photo1.png" data-asset="photo1" alt="صورة 1" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="https://a.top4top.io/p_3914s0fbz2.png" alt="صورة 1" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_1">01 / صور ثابتة</span>
                             <h3 style="font-size: 18px;" data-i18n="photo_title_1">لقطة إضافية 1</h3>
@@ -136,7 +148,7 @@
 
                     
                     <div class="media-card" data-category="image">
-                        <img src="work/photo2.png" data-asset="photo2" alt="صورة 2" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="https://b.top4top.io/p_3914426nx3.png" alt="صورة 2" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_2">02 / صور ثابتة</span>
                             <h3 style="font-size: 18px;" data-i18n="photo_title_2">لقطة إضافية 2</h3>
@@ -145,7 +157,7 @@
 
                     
                     <div class="media-card" data-category="image">
-                        <img src="work/photo3.png" data-asset="photo3" alt="صورة 3" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="https://c.top4top.io/p_39140987y4.png" alt="صورة 3" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_3">03 / صور ثابتة</span>
                             <h3 style="font-size: 18px;" data-i18n="photo_title_3">لقطة إضافية 3</h3>
@@ -154,7 +166,7 @@
 
                     
                     <div class="media-card" data-category="image">
-                        <img src="work/photo4.png" data-asset="photo4" alt="صورة 4" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="https://d.top4top.io/p_3914m31j15.png" alt="صورة 4" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;" data-i18n="photo_badge_4">04 / صور ثابتة</span>
                             <h3 style="font-size: 18px;" data-i18n="photo_title_4">لقطة إضافية 4</h3>
@@ -162,7 +174,7 @@
                     </div>
 
                     <div class="media-card" data-category="image">
-                        <img src="work/photo5.png" data-asset="photo5" alt="صورة 5" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="https://j.top4top.io/p_3914a7imm1.png" alt="صورة 5" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         <div class="media-info">
                             <span class="badge" style="margin-bottom: 8px;">05 / صور ثابتة</span>
                             <h3 style="font-size: 18px;">لقطة إضافية 5</h3>
