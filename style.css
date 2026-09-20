@@ -1023,3 +1023,230 @@ html[dir="ltr"] .nav-right-group {
         font-weight: 700;
     }
 }
+
+/* ==========================================================
+   FINAL RESPONSIVE HEADER FIX
+   Fixes mobile horizontal overflow and keeps the desktop
+   header centered without clipping.
+   ========================================================== */
+
+header {
+    overflow: visible;
+}
+
+.nav-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ---------- Desktop / Tablet ---------- */
+@media (min-width: 992px) {
+    .nav-container {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        width: 100%;
+        max-width: 1400px;
+        padding-inline: 24px;
+        column-gap: 20px;
+        direction: ltr;
+    }
+
+    .logo-wrapper {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .nav-links {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex !important;
+        justify-self: center;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .nav-controls {
+        grid-column: 3;
+        grid-row: 1;
+        display: flex !important;
+        justify-self: end;
+        width: max-content;
+        max-width: 100%;
+        min-width: 0;
+        gap: 8px;
+        flex-shrink: 1;
+    }
+
+    html[dir="rtl"] .logo-wrapper {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    html[dir="rtl"] .nav-links {
+        grid-column: 2;
+        justify-self: center;
+    }
+
+    html[dir="rtl"] .nav-controls {
+        grid-column: 1;
+        justify-self: start;
+    }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 991px) {
+    body {
+        padding-top: 99px;
+        overflow-x: hidden;
+    }
+
+    header {
+        top: 29px;
+    }
+
+    .nav-container {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: none;
+        min-height: 64px;
+        padding-inline: 12px;
+        gap: 8px;
+        direction: ltr;
+    }
+
+    html[dir="ltr"] .nav-container {
+        flex-direction: row;
+    }
+
+    html[dir="rtl"] .nav-container {
+        flex-direction: row-reverse;
+    }
+
+    .nav-links {
+        display: none !important;
+    }
+
+    .logo-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        flex: 0 1 auto;
+    }
+
+    .logo {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    .logo-img {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+    }
+
+    .nav-controls {
+        display: flex !important;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        width: auto;
+        flex: 0 1 auto;
+        flex-shrink: 1;
+        direction: ltr;
+    }
+
+    #quickBookingBtn {
+        display: none !important;
+    }
+
+    /* Hide the language selector on phones so the header cannot overflow. */
+    .nav-controls > .dropdown-wrapper:first-of-type {
+        display: none !important;
+    }
+
+    /* Theme selector */
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        display: block;
+        flex: 0 1 145px;
+        width: 145px;
+        min-width: 0;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) .dropdown-trigger {
+        width: 100%;
+        min-width: 0 !important;
+        max-width: 100%;
+        padding: 7px 9px;
+        font-size: 10.5px;
+        overflow: hidden;
+    }
+
+    #currentThemeLabel {
+        display: block;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .menu-trigger {
+        min-width: 82px;
+        padding: 7px 9px;
+        font-size: 10.5px;
+        flex: 0 0 auto;
+    }
+
+    .dropdown-menu {
+        max-width: calc(100vw - 20px);
+    }
+
+    .hero-section {
+        min-height: calc(100vh - 99px);
+    }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 370px) {
+    .nav-container {
+        padding-inline: 8px;
+        gap: 4px;
+    }
+
+    .nav-controls {
+        gap: 4px;
+    }
+
+    .logo {
+        font-size: 15px;
+    }
+
+    .logo-img {
+        width: 28px;
+        height: 28px;
+        flex-basis: 28px;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        width: 122px;
+        flex-basis: 122px;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) .dropdown-trigger {
+        padding: 6px 7px;
+        font-size: 9.5px;
+    }
+
+    .menu-trigger {
+        min-width: 72px;
+        padding: 6px 7px;
+        font-size: 9.5px;
+    }
+}
