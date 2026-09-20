@@ -1,31 +1,88 @@
-let currentVisits = 1421; 
 
 export default async function handler(req, res) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader(
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, proxy-revalidate'
+    );
 
-    if (req.method !== 'POST' && req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+    if (req.method !== 'POST') {
+        if (req.method === 'GET') {
+            return res.status(200).json({
+                success: true,
+                service: '5lo Studio visitor logger'
+            });
+        }
+
+        return res.status(405).json({
+            success: false,
+            error: 'Method not allowed'
+        });
     }
 
     try {
-        currentVisits += 1;
+        const body = req.body || {};
 
-        const userAgent = req.body?.userAgent || req.headers['user-agent'] || 'Unknown';
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown';
+        const userAgent =
+            String(body.userAgent || req.headers['user-agent'] || 'Unknown')
+                .replace(/[\u0000-\u001F\u007F]/g, ' ')
+                .slice(0, 500);
 
-        const webhookUrl = process.env.webhook || process.env.DISCORD_WEBHOOK_URL;
+        const page =
+            String(body.page || '/')
+                .replace(/[\u0000-\u001F\u007F]/g, ' ')
+                .slice(0, 200);
 
-        if (webhookUrl && req.method === 'POST') {
+        const language =
+            String(body.language || 'ar')
+                .replace(/[\u0000-\u001F\u007F]/g, ' ')
+                .slice(0, 30);
+
+        const forwardedFor = req.headers['x-forwarded-for'];
+
+        const ip =
+            (Array.isArray(forwardedFor)
+                ? forwardedFor[0]
+                : String(forwardedFor || '').split(',')[0]) ||
+            req.socket?.remoteAddress ||
+            'Unknown';
+
+        const webhookUrl =
+            process.env.webhook ||
+            process.env.DISCORD_WEBHOOK_URL;
+
+        if (webhookUrl) {
             const discordPayload = {
+                username: '5lo Studio',
                 embeds: [
                     {
-                        title: '🚨 زائر جديد دخل إلى الموقع',
-                        color: 15158332,
+                        title: '👀 زائر جديد — 5lo Studio',
+                        description: 'تم تسجيل زيارة جديدة للموقع.',
+                        color: 3718648,
                         fields: [
-                            { name: '🌐 عنوان الـ IP', value: `\`${ip}\``, inline: false },
-                            { name: '💻 معلومات الجهاز والمتصفح', value: `\`${userAgent}\``, inline: false },
-                            { name: '📊 إجمالي الزيارات الحالي', value: `\`${currentVisits}\``, inline: false }
+                            {
+                                name: '🌐 IP',
+                                value: `\`${String(ip).slice(0, 200)}\``,
+                                inline: false
+                            },
+                            {
+                                name: '📄 الصفحة',
+                                value: `\`${page}\``,
+                                inline: true
+                            },
+                            {
+                                name: '🌍 اللغة',
+                                value: `\`${language}\``,
+                                inline: true
+                            },
+                            {
+                                name: '💻 المتصفح والجهاز',
+                                value: `\`${userAgent}\``,
+                                inline: false
+                            }
                         ],
+                        footer: {
+                            text: '5lo Studio • Relax Theme'
+                        },
                         timestamp: new Date().toISOString()
                     }
                 ]
@@ -33,14 +90,27 @@ export default async function handler(req, res) {
 
             await fetch(webhookUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(discordPayload)
-            }).catch(() => {});
+            }).catch((error) => {
+                console.warn(
+                    '5lo Studio visitor webhook failed:',
+                    error?.message || error
+                );
+            });
         }
 
-        return res.status(200).json({ success: true, visits: currentVisits });
+        return res.status(200).json({
+            success: true
+        });
+
     } catch (error) {
-        console.error('Log error:', error);
-        return res.status(200).json({ success: true, visits: currentVisits });
+        console.error('5lo Studio visitor logger error:', error);
+
+        return res.status(200).json({
+            success: true
+        });
     }
 }
