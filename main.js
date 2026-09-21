@@ -572,6 +572,7 @@ function changeLanguage(lang) {
     adjustQuickBookingPosition();
     applyTranslations();
 
+    // Recalculate reveal/layout after direction changes without changing scroll position.
     requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
     });
@@ -783,7 +784,9 @@ if (document.readyState === 'loading') {
     initializeWebsite();
 }
 
-
+/* ==========================================================
+   PAGE / NAVIGATION MOTION
+   ========================================================== */
 function initPageMotion() {
     document.documentElement.classList.add('page-ready');
     initSiteRevealAnimations();
