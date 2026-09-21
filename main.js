@@ -358,6 +358,15 @@ const translations = {
         form_phone_placeholder: '05XXXXXXXX',
         form_phone_title: 'يجب أن يتكون رقم التواصل من 10 أرقام ويبدأ بـ 05',
         form_city: 'المدينة',
+        form_booking_day: 'يوم الحجز',
+        booking_day_select: 'اختر يوم الحجز',
+        booking_day_sunday: 'الأحد',
+        booking_day_monday: 'الاثنين',
+        booking_day_tuesday: 'الثلاثاء',
+        booking_day_wednesday: 'الأربعاء',
+        booking_day_thursday: 'الخميس',
+        booking_day_friday: 'الجمعة',
+        booking_day_saturday: 'السبت',
         city_select: 'اختر المدينة',
         city_dammam: 'الدمام',
         city_khobar: 'الخبر',
@@ -467,6 +476,15 @@ const translations = {
         form_phone_placeholder: '05XXXXXXXX',
         form_phone_title: 'Enter a 10-digit phone number starting with 05',
         form_city: 'City',
+        form_booking_day: 'Booking Day',
+        booking_day_select: 'Select booking day',
+        booking_day_sunday: 'Sunday',
+        booking_day_monday: 'Monday',
+        booking_day_tuesday: 'Tuesday',
+        booking_day_wednesday: 'Wednesday',
+        booking_day_thursday: 'Thursday',
+        booking_day_friday: 'Friday',
+        booking_day_saturday: 'Saturday',
         city_select: 'Select a city',
         city_dammam: 'Dammam',
         city_khobar: 'Khobar',
@@ -775,7 +793,6 @@ function initializeWebsite() {
     enableBasicClientDeterrents();
     reportVisit();
     initPageMotion();
-    updateMobileHeaderLabels();
 }
 
 if (document.readyState === 'loading') {
@@ -841,28 +858,3 @@ function initSiteRevealAnimations() {
 
     elements.forEach(el => observer.observe(el));
 }
-
-function updateMobileHeaderLabels() {
-    const langLabel = document.getElementById('currentLangLabel');
-    const themeLabel = document.getElementById('currentThemeLabel');
-    if (!langLabel || !themeLabel) return;
-
-    const isMobile = window.matchMedia('(max-width: 991px)').matches;
-
-    if (isMobile) {
-        langLabel.textContent = currentLang === 'ar' ? 'العربية SA' : 'English US';
-
-        const compactThemeNames = {
-            saudi: currentLang === 'ar' ? 'السعودي 💚' : 'Saudi 💚',
-            relax: currentLang === 'ar' ? 'الوضع الهادئ 🍃' : 'Relax',
-            dark: currentLang === 'ar' ? 'الوضع الداكن 🌙' : 'Dark',
-            light: currentLang === 'ar' ? 'المود الفاتح ☀️' : 'Light'
-        };
-
-        themeLabel.textContent =
-            compactThemeNames[currentTheme] ||
-            (currentLang === 'ar' ? currentThemeLabelAr : currentThemeLabelEn);
-    }
-}
-
-window.addEventListener('resize', updateMobileHeaderLabels);
