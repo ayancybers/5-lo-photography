@@ -294,7 +294,6 @@
                     reset();
                 });
 
-                // On mobile, a light tilt follows the finger without blocking scrolling.
                 card.addEventListener('touchmove', event => {
                     if (!event.touches[0]) return;
                     const rect = card.getBoundingClientRect();
