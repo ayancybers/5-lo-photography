@@ -521,6 +521,8 @@ let currentThemeLabelEn = localStorage.getItem('theme_label_en') || 'Relax';
 
 document.documentElement.setAttribute('lang', currentLang);
 document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+document.documentElement.classList.toggle('lang-ar', currentLang === 'ar');
+document.documentElement.classList.toggle('lang-en', currentLang !== 'ar');
 document.documentElement.setAttribute('data-theme', currentTheme);
 
 function toggleDropdown(event, dropdownId) {
@@ -560,10 +562,19 @@ function setTheme(themeName, labelAr, labelEn) {
 function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('site_lang', lang);
+
+    const isArabic = lang === 'ar';
     document.documentElement.setAttribute('lang', lang);
-    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+    document.documentElement.classList.toggle('lang-ar', isArabic);
+    document.documentElement.classList.toggle('lang-en', !isArabic);
+
     adjustQuickBookingPosition();
     applyTranslations();
+
+    requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('resize'));
+    });
 }
 
 function adjustQuickBookingPosition() {
@@ -771,6 +782,7 @@ if (document.readyState === 'loading') {
 } else {
     initializeWebsite();
 }
+
 
 function initPageMotion() {
     document.documentElement.classList.add('page-ready');
