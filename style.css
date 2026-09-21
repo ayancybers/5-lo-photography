@@ -2026,12 +2026,6 @@ input, textarea, select, button {
     }
 }
 
-
-/* ==========================================================
-   FINAL MOBILE HEADER FIX
-   Keeps RTL/LTR aligned and dropdowns fully clickable.
-   ========================================================== */
-
 html, body {
     width: 100%;
     max-width: 100%;
@@ -2120,7 +2114,6 @@ header {
         direction: ltr !important;
     }
 
-    /* RTL: controls on the left, logo on the right */
     html[dir="rtl"] .nav-controls {
         grid-column: 1 !important;
         grid-row: 1 !important;
@@ -2133,7 +2126,6 @@ header {
         justify-self: end !important;
     }
 
-    /* LTR: logo on the left, controls on the right */
     html[dir="ltr"] .logo-wrapper {
         grid-column: 1 !important;
         grid-row: 1 !important;
@@ -2146,7 +2138,6 @@ header {
         justify-self: end !important;
     }
 
-    /* Mobile control sizes: small enough to fit iPhone width */
     .nav-controls > .dropdown-wrapper:first-of-type {
         width: 76px !important;
         flex: 0 0 76px !important;
@@ -2240,7 +2231,6 @@ header {
         display: none;
     }
 
-    /* Make the mobile header calm and compact in both languages */
     html[lang="en"] .logo {
         font-size: 16px !important;
     }
@@ -2302,5 +2292,49 @@ header {
     .dropdown-menu {
         animation: none !important;
         transition: none !important;
+    }
+}
+
+.nav-controls {
+    direction: ltr !important;
+}
+
+html[dir="rtl"] .nav-controls {
+    flex-direction: row-reverse !important;
+}
+
+html[dir="ltr"] .nav-controls {
+    flex-direction: row !important;
+}
+
+html[dir="rtl"] .nav-controls .dropdown-wrapper .dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+}
+
+html[dir="ltr"] .nav-controls .dropdown-wrapper .dropdown-menu {
+    right: auto !important;
+    left: 0 !important;
+}
+
+.menu-trigger {
+    flex: 0 0 auto !important;
+}
+
+@media (max-width: 991px) {
+    .nav-container {
+        overflow: visible !important;
+    }
+
+    .nav-controls {
+        overflow: visible !important;
+    }
+
+    .dropdown-wrapper {
+        overflow: visible !important;
+    }
+
+    .dropdown-menu {
+        z-index: 999999 !important;
     }
 }
