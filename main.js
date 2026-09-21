@@ -189,8 +189,6 @@ document.getElementById('site-header').innerHTML = `
     </div>
 `;
 
-document.querySelectorAll('.dropdown-menu').forEach(menu => menu.setAttribute('aria-hidden', 'true'));
-
 document.getElementById('site-footer').innerHTML = `
     <footer>
         <div class="container footer-flex">
@@ -528,37 +526,20 @@ document.documentElement.classList.toggle('lang-en', currentLang !== 'ar');
 document.documentElement.setAttribute('data-theme', currentTheme);
 
 function toggleDropdown(event, dropdownId) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    const target = document.getElementById(dropdownId);
-    if (!target) return;
-
-    const wasOpen = target.classList.contains('active');
-
+    event.stopPropagation();
     document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.remove('active');
-        menu.setAttribute('aria-hidden', 'true');
+        if (menu.id !== dropdownId) {
+            menu.classList.remove('active');
+        }
     });
-
-    if (!wasOpen) {
-        target.classList.add('active');
-        target.setAttribute('aria-hidden', 'false');
-    }
+    document.getElementById(dropdownId)?.classList.toggle('active');
 }
 
-window.addEventListener('click', (event) => {
-    if (!event.target.closest('.dropdown-wrapper')) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            menu.classList.remove('active');
-            menu.setAttribute('aria-hidden', 'true');
-        });
-    }
-    if (!event.target.closest('.social-float')) {
-        closeSocialMenu();
-    }
+window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('active');
+    });
+    closeSocialMenu();
 });
 
 window.addEventListener('keydown', event => {
@@ -590,11 +571,6 @@ function changeLanguage(lang) {
 
     adjustQuickBookingPosition();
     applyTranslations();
-
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.remove('active');
-        menu.setAttribute('aria-hidden', 'true');
-    });
 
     requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
@@ -799,6 +775,7 @@ function initializeWebsite() {
     enableBasicClientDeterrents();
     reportVisit();
     initPageMotion();
+    updateMobileHeaderLabels();
 }
 
 if (document.readyState === 'loading') {
@@ -864,3 +841,31 @@ function initSiteRevealAnimations() {
 
     elements.forEach(el => observer.observe(el));
 }
+
+/* ==========================================================
+   MOBILE HEADER LABELS
+   ========================================================== */
+function updateMobileHeaderLabels() {
+    const langLabel = document.getElementById('currentLangLabel');
+    const themeLabel = document.getElementById('currentThemeLabel');
+    if (!langLabel || !themeLabel) return;
+
+    const isMobile = window.matchMedia('(max-width: 991px)').matches;
+
+    if (isMobile) {
+        langLabel.textContent = currentLang === 'ar' ? 'العربية SA' : 'English US';
+
+        const compactThemeNames = {
+            saudi: currentLang === 'ar' ? 'السعودي 💚' : 'Saudi 💚',
+            relax: currentLang === 'ar' ? 'الوضع الهادئ 🍃' : 'Relax',
+            dark: currentLang === 'ar' ? 'الوضع الداكن 🌙' : 'Dark',
+            light: currentLang === 'ar' ? 'المود الفاتح ☀️' : 'Light'
+        };
+
+        themeLabel.textContent =
+            compactThemeNames[currentTheme] ||
+            (currentLang === 'ar' ? currentThemeLabelAr : currentThemeLabelEn);
+    }
+}
+
+window.addEventListener('resize', updateMobileHeaderLabels);
