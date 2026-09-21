@@ -774,6 +774,7 @@ if (document.readyState === 'loading') {
 
 function initPageMotion() {
     document.documentElement.classList.add('page-ready');
+    initSiteRevealAnimations();
 
     document.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
@@ -793,4 +794,38 @@ function initPageMotion() {
             }, 180);
         });
     });
+}
+
+
+function initSiteRevealAnimations() {
+    const selectors = [
+        '.sec-header',
+        '#services .card',
+        '#packages .card',
+        '#contact .grid-2 > div',
+        '#bookingForm'
+    ];
+
+    const elements = [...document.querySelectorAll(selectors.join(','))]
+        .filter((el, index, arr) => arr.indexOf(el) === index);
+
+    elements.forEach((el, index) => {
+        el.classList.add('site-reveal');
+        el.style.setProperty('--reveal-delay', `${Math.min((index % 4) * 70, 210)}ms`);
+    });
+
+    if (!('IntersectionObserver' in window)) {
+        elements.forEach(el => el.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: .12, rootMargin: '0px 0px -45px 0px' });
+
+    elements.forEach(el => observer.observe(el));
 }
