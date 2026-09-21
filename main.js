@@ -763,10 +763,34 @@ function initializeWebsite() {
     forceVideoAutoplay();
     enableBasicClientDeterrents();
     reportVisit();
+    initPageMotion();
 }
 
 if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', initializeWebsite);
 } else {
     initializeWebsite();
+}
+
+function initPageMotion() {
+    document.documentElement.classList.add('page-ready');
+
+    document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') ||
+            href.startsWith('mailto:') || href.startsWith('tel:') ||
+            link.target === '_blank') return;
+
+        link.addEventListener('click', event => {
+            const url = new URL(link.href, window.location.href);
+            if (url.origin !== window.location.origin) return;
+
+            event.preventDefault();
+            document.body.classList.add('page-leaving');
+
+            window.setTimeout(() => {
+                window.location.href = url.href;
+            }, 180);
+        });
+    });
 }
