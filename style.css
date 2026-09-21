@@ -1478,6 +1478,9 @@ header {
     }
 }
 
+/* ==========================================================
+   WORKS / GALLERY — CINEMATIC MOTION + MOBILE UX
+   ========================================================== */
 
 .works-grid {
     perspective: 1200px;
@@ -1501,6 +1504,7 @@ header {
         box-shadow .5s ease;
 }
 
+/* Scroll entrance */
 .reveal-item {
     opacity: 0;
     transform: translate3d(0, 44px, 0) scale(.97);
@@ -1517,6 +1521,7 @@ header {
     transition-delay: var(--filter-delay, 0ms);
 }
 
+/* Smooth filtering instead of an abrupt display:none jump */
 .works-grid.is-filtering .media-card:not(.is-hidden) {
     transform: translate3d(0, 8px, 0) scale(.985);
     opacity: .35;
@@ -1526,6 +1531,7 @@ header {
     display: none;
 }
 
+/* Image = slow cinematic camera move */
 .motion-photo {
     --mx: 50%;
     --my: 50%;
@@ -1604,6 +1610,7 @@ header {
     opacity: 1;
 }
 
+/* Better phones: one column, shorter cards, bigger touch targets */
 @media (max-width: 767px) {
     section {
         padding: 78px 0;
@@ -1657,6 +1664,7 @@ header {
             );
     }
 
+    /* Keep the camera movement subtle on touch screens */
     .motion-photo img {
         animation-duration: 13s !important;
     }
@@ -1703,6 +1711,9 @@ header {
 }
 
 
+/* ==========================================================
+   SITE-WIDE SMOOTH MOTION — HOME / SERVICES / PACKAGES
+   ========================================================== */
 html { scroll-behavior: smooth; }
 
 body {
@@ -1739,6 +1750,7 @@ body.page-leaving {
     filter: blur(0);
 }
 
+/* Hero entrance + subtle cinematic video motion */
 .hero-section .container > * {
     opacity: 0;
     transform: translateY(24px);
@@ -1763,6 +1775,7 @@ body.page-leaving {
     to   { transform: scale(1.075) translate3d(.35%,-.35%,0); }
 }
 
+/* Cards: smooth lift, not aggressive */
 .card {
     transform: translateZ(0);
     transition:
@@ -1780,6 +1793,7 @@ body.page-leaving {
     .card.featured:hover { transform: translateY(-10px) scale(1.012); }
 }
 
+/* Buttons feel responsive */
 .btn-main, .btn-sec, .btn-outline, .btn-dark,
 .menu-trigger, .dropdown-trigger, .filter-btn {
     transition:
@@ -1794,6 +1808,7 @@ body.page-leaving {
     transform: scale(.965);
 }
 
+/* Form focus animation */
 .input-box {
     transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
@@ -1802,6 +1817,7 @@ body.page-leaving {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
+/* Mobile tuning */
 @media (max-width: 767px) {
     .site-reveal {
         transform: translate3d(0, 22px, 0) scale(.992);
@@ -1841,6 +1857,12 @@ body.page-leaving {
     }
 }
 
+
+/* ==========================================================
+   FINAL MOBILE / ENGLISH FIX
+   Prevent horizontal drift, accidental zoom feel, and
+   keep English LTR layout full-width and readable.
+   ========================================================== */
 
 html {
     width: 100%;
@@ -1893,6 +1915,7 @@ img, video, iframe, svg, canvas {
         margin-inline: auto;
     }
 
+    /* Never let long English labels create a wider page */
     .logo,
     .dropdown-trigger,
     .menu-trigger,
@@ -1908,6 +1931,7 @@ img, video, iframe, svg, canvas {
         text-overflow: ellipsis;
     }
 
+    /* Stable mobile header in both directions */
     .nav-container {
         width: 100% !important;
         max-width: 100% !important;
@@ -1943,6 +1967,7 @@ img, video, iframe, svg, canvas {
         overflow: visible;
     }
 
+    /* English header labels stay compact */
     html[dir="ltr"] .nav-controls > .dropdown-wrapper:first-of-type,
     html[dir="rtl"] .nav-controls > .dropdown-wrapper:first-of-type {
         width: 84px;
@@ -1968,6 +1993,7 @@ img, video, iframe, svg, canvas {
         min-width: 0 !important;
     }
 
+    /* Content always fills the phone width */
     main > section > .container,
     #packages > .container,
     #services > .container {
@@ -1990,10 +2016,12 @@ img, video, iframe, svg, canvas {
         max-width: 100%;
     }
 
+    /* English text wraps naturally instead of expanding the page */
     h1, h2, h3, h4, p, li, label, button, a, span {
         overflow-wrap: anywhere;
     }
 
+    /* Do not allow a long English word to make a card wider */
     .card,
     .media-card,
     .sec-header {
@@ -2002,6 +2030,7 @@ img, video, iframe, svg, canvas {
     }
 }
 
+/* English-specific typography: same visual scale as Arabic */
 html[lang="en"] body {
     font-family: 'Tajawal', Arial, sans-serif;
     letter-spacing: 0;
@@ -2016,6 +2045,7 @@ html[lang="en"] .card li {
     line-height: 1.65;
 }
 
+/* Prevent Safari from enlarging small form text */
 input, textarea, select, button {
     font-size: 16px;
 }
