@@ -1478,9 +1478,6 @@ header {
     }
 }
 
-/* ==========================================================
-   WORKS / GALLERY — CINEMATIC MOTION + MOBILE UX
-   ========================================================== */
 
 .works-grid {
     perspective: 1200px;
@@ -1504,7 +1501,6 @@ header {
         box-shadow .5s ease;
 }
 
-/* Scroll entrance */
 .reveal-item {
     opacity: 0;
     transform: translate3d(0, 44px, 0) scale(.97);
@@ -1521,7 +1517,6 @@ header {
     transition-delay: var(--filter-delay, 0ms);
 }
 
-/* Smooth filtering instead of an abrupt display:none jump */
 .works-grid.is-filtering .media-card:not(.is-hidden) {
     transform: translate3d(0, 8px, 0) scale(.985);
     opacity: .35;
@@ -1531,7 +1526,6 @@ header {
     display: none;
 }
 
-/* Image = slow cinematic camera move */
 .motion-photo {
     --mx: 50%;
     --my: 50%;
@@ -1610,7 +1604,6 @@ header {
     opacity: 1;
 }
 
-/* Better phones: one column, shorter cards, bigger touch targets */
 @media (max-width: 767px) {
     section {
         padding: 78px 0;
@@ -1664,7 +1657,6 @@ header {
             );
     }
 
-    /* Keep the camera movement subtle on touch screens */
     .motion-photo img {
         animation-duration: 13s !important;
     }
@@ -1711,9 +1703,6 @@ header {
 }
 
 
-/* ==========================================================
-   SITE-WIDE SMOOTH MOTION — HOME / SERVICES / PACKAGES
-   ========================================================== */
 html { scroll-behavior: smooth; }
 
 body {
@@ -1750,7 +1739,6 @@ body.page-leaving {
     filter: blur(0);
 }
 
-/* Hero entrance + subtle cinematic video motion */
 .hero-section .container > * {
     opacity: 0;
     transform: translateY(24px);
@@ -1775,7 +1763,6 @@ body.page-leaving {
     to   { transform: scale(1.075) translate3d(.35%,-.35%,0); }
 }
 
-/* Cards: smooth lift, not aggressive */
 .card {
     transform: translateZ(0);
     transition:
@@ -1793,7 +1780,6 @@ body.page-leaving {
     .card.featured:hover { transform: translateY(-10px) scale(1.012); }
 }
 
-/* Buttons feel responsive */
 .btn-main, .btn-sec, .btn-outline, .btn-dark,
 .menu-trigger, .dropdown-trigger, .filter-btn {
     transition:
@@ -1808,7 +1794,6 @@ body.page-leaving {
     transform: scale(.965);
 }
 
-/* Form focus animation */
 .input-box {
     transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
@@ -1817,7 +1802,6 @@ body.page-leaving {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
-/* Mobile tuning */
 @media (max-width: 767px) {
     .site-reveal {
         transform: translate3d(0, 22px, 0) scale(.992);
@@ -1857,12 +1841,6 @@ body.page-leaving {
     }
 }
 
-
-/* ==========================================================
-   FINAL MOBILE / ENGLISH FIX
-   Prevent horizontal drift, accidental zoom feel, and
-   keep English LTR layout full-width and readable.
-   ========================================================== */
 
 html {
     width: 100%;
@@ -1915,7 +1893,6 @@ img, video, iframe, svg, canvas {
         margin-inline: auto;
     }
 
-    /* Never let long English labels create a wider page */
     .logo,
     .dropdown-trigger,
     .menu-trigger,
@@ -1931,7 +1908,6 @@ img, video, iframe, svg, canvas {
         text-overflow: ellipsis;
     }
 
-    /* Stable mobile header in both directions */
     .nav-container {
         width: 100% !important;
         max-width: 100% !important;
@@ -1967,7 +1943,6 @@ img, video, iframe, svg, canvas {
         overflow: visible;
     }
 
-    /* English header labels stay compact */
     html[dir="ltr"] .nav-controls > .dropdown-wrapper:first-of-type,
     html[dir="rtl"] .nav-controls > .dropdown-wrapper:first-of-type {
         width: 84px;
@@ -1993,7 +1968,6 @@ img, video, iframe, svg, canvas {
         min-width: 0 !important;
     }
 
-    /* Content always fills the phone width */
     main > section > .container,
     #packages > .container,
     #services > .container {
@@ -2016,12 +1990,10 @@ img, video, iframe, svg, canvas {
         max-width: 100%;
     }
 
-    /* English text wraps naturally instead of expanding the page */
     h1, h2, h3, h4, p, li, label, button, a, span {
         overflow-wrap: anywhere;
     }
 
-    /* Do not allow a long English word to make a card wider */
     .card,
     .media-card,
     .sec-header {
@@ -2030,7 +2002,6 @@ img, video, iframe, svg, canvas {
     }
 }
 
-/* English-specific typography: same visual scale as Arabic */
 html[lang="en"] body {
     font-family: 'Tajawal', Arial, sans-serif;
     letter-spacing: 0;
@@ -2045,7 +2016,6 @@ html[lang="en"] .card li {
     line-height: 1.65;
 }
 
-/* Prevent Safari from enlarging small form text */
 input, textarea, select, button {
     font-size: 16px;
 }
@@ -2054,4 +2024,269 @@ input, textarea, select, button {
     input, textarea, select, button {
         font-size: inherit;
     }
+}
+
+
+
+#site-header,
+#site-header > *,
+header,
+.nav-container,
+.nav-controls,
+.dropdown-wrapper {
+    overflow: visible !important;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overflow-x: clip !important;
+}
+
+header {
+    isolation: isolate;
+}
+
+.nav-container {
+    position: relative;
+    z-index: 100;
+}
+
+.dropdown-menu {
+    z-index: 999999 !important;
+    max-height: min(60vh, 320px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-controls {
+    position: relative;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+}
+
+.dropdown-trigger,
+.menu-trigger {
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html[dir="rtl"] .nav-container {
+    direction: ltr;
+    flex-direction: row !important;
+}
+
+html[dir="rtl"] .nav-controls {
+    order: 1 !important;
+    direction: ltr;
+}
+
+html[dir="rtl"] .logo-wrapper {
+    order: 2 !important;
+    direction: rtl;
+}
+
+html[dir="ltr"] .nav-container {
+    direction: ltr;
+    flex-direction: row !important;
+}
+
+html[dir="ltr"] .logo-wrapper {
+    order: 1 !important;
+    direction: ltr;
+}
+
+html[dir="ltr"] .nav-controls {
+    order: 2 !important;
+    direction: ltr;
+}
+
+.logo-wrapper {
+    min-width: 0 !important;
+    max-width: min(42vw, 300px);
+}
+
+.logo {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 991px) {
+    .nav-container {
+        min-height: 64px !important;
+        padding-inline: 10px !important;
+        gap: 8px !important;
+    }
+
+    .nav-controls {
+        display: flex !important;
+        align-items: center;
+        gap: 7px !important;
+        flex: 0 1 auto !important;
+        min-width: 0 !important;
+        max-width: 72vw !important;
+    }
+
+    .nav-controls > .btn-main#quickBookingBtn {
+        display: none !important;
+    }
+
+    .dropdown-trigger,
+    .menu-trigger {
+        min-width: 0 !important;
+        height: 44px;
+        padding: 8px 11px !important;
+        font-size: 12px !important;
+        border-radius: 10px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:first-of-type {
+        width: auto !important;
+        flex: 0 1 118px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        width: auto !important;
+        flex: 0 1 145px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper .dropdown-trigger {
+        width: 100%;
+    }
+
+    #currentLangLabel,
+    #currentThemeLabel {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .menu-trigger {
+        flex: 0 0 auto;
+    }
+
+    .dropdown-menu {
+        top: calc(100% + 9px) !important;
+        width: max-content;
+        min-width: 150px;
+        max-width: min(88vw, 250px);
+    }
+
+    html[dir="rtl"] .dropdown-menu {
+        left: auto !important;
+        right: 0 !important;
+    }
+
+    html[dir="ltr"] .dropdown-menu {
+        left: auto !important;
+        right: 0 !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .logo-wrapper {
+        max-width: 34vw;
+    }
+
+    .logo {
+        font-size: 18px !important;
+    }
+
+    .logo-img {
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+    .nav-controls {
+        max-width: 64vw !important;
+        gap: 5px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:first-of-type {
+        flex-basis: 86px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        flex-basis: 112px !important;
+    }
+
+    .dropdown-trigger,
+    .menu-trigger {
+        padding-inline: 9px !important;
+        font-size: 11px !important;
+    }
+
+    .menu-trigger {
+        width: 46px;
+        padding-inline: 0 !important;
+        justify-content: center;
+        font-size: 0 !important;
+    }
+
+    .menu-trigger::before {
+        content: "☰";
+        font-size: 17px;
+    }
+
+    .menu-trigger span {
+        display: none;
+    }
+}
+
+@media (max-width: 390px) {
+    .logo-wrapper {
+        max-width: 29vw;
+    }
+
+    .logo {
+        font-size: 16px !important;
+    }
+
+    .logo-img {
+        width: 34px !important;
+        height: 34px !important;
+    }
+
+    .nav-controls {
+        max-width: 69vw !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:first-of-type {
+        flex-basis: 78px !important;
+    }
+
+    .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        flex-basis: 98px !important;
+    }
+}
+
+html[lang="en"] .nav-controls,
+html[lang="en"] .dropdown-item,
+html[lang="en"] .dropdown-trigger,
+html[lang="en"] .menu-trigger {
+    font-family: 'Tajawal', Arial, sans-serif;
+}
+
+html[lang="en"] .dropdown-item {
+    white-space: nowrap;
+}
+
+html[lang="en"] .logo {
+    letter-spacing: -0.4px;
+}
+
+.fullscreen-menu {
+    z-index: 999998 !important;
+}
+
+.fullscreen-menu.active {
+    pointer-events: auto !important;
 }
