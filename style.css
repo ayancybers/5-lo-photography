@@ -1501,7 +1501,6 @@ header {
         box-shadow .5s ease;
 }
 
-
 .reveal-item {
     opacity: 0;
     transform: translate3d(0, 44px, 0) scale(.97);
@@ -1517,7 +1516,6 @@ header {
     filter: blur(0);
     transition-delay: var(--filter-delay, 0ms);
 }
-
 
 .works-grid.is-filtering .media-card:not(.is-hidden) {
     transform: translate3d(0, 8px, 0) scale(.985);
@@ -1741,7 +1739,6 @@ body.page-leaving {
     filter: blur(0);
 }
 
-
 .hero-section .container > * {
     opacity: 0;
     transform: translateY(24px);
@@ -1841,5 +1838,190 @@ body.page-leaving {
         filter: none !important;
         animation: none !important;
         transition: none !important;
+    }
+}
+
+
+html {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-x: clip;
+}
+
+#site-header,
+#site-footer,
+main,
+section,
+.container {
+    max-width: 100%;
+    min-width: 0;
+}
+
+img, video, iframe, svg, canvas {
+    max-width: 100%;
+}
+
+@media (max-width: 991px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+        overflow-x: clip !important;
+    }
+
+    body {
+        touch-action: pan-y;
+        overscroll-behavior-x: none;
+    }
+
+    .container {
+        width: min(92%, 1240px);
+        margin-inline: auto;
+    }
+
+    .logo,
+    .dropdown-trigger,
+    .menu-trigger,
+    .nav-controls,
+    .nav-container,
+    .header-side-group {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .logo {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nav-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-inline: 10px !important;
+        gap: 7px !important;
+        overflow: hidden;
+    }
+
+    html[dir="ltr"] .nav-container,
+    html[dir="rtl"] .nav-container {
+        flex-direction: row !important;
+    }
+
+    html[dir="ltr"] .logo-wrapper {
+        order: 1;
+    }
+
+    html[dir="ltr"] .nav-controls {
+        order: 2;
+    }
+
+    html[dir="rtl"] .nav-controls {
+        order: 1;
+    }
+
+    html[dir="rtl"] .logo-wrapper {
+        order: 2;
+    }
+
+    .nav-controls {
+        flex: 0 1 auto !important;
+        width: auto !important;
+        overflow: visible;
+    }
+
+    html[dir="ltr"] .nav-controls > .dropdown-wrapper:first-of-type,
+    html[dir="rtl"] .nav-controls > .dropdown-wrapper:first-of-type {
+        width: 84px;
+        flex: 0 0 84px;
+    }
+
+    html[dir="ltr"] .nav-controls > .dropdown-wrapper:nth-of-type(2),
+    html[dir="rtl"] .nav-controls > .dropdown-wrapper:nth-of-type(2) {
+        width: 112px;
+        flex: 0 0 112px;
+    }
+
+    #currentLangLabel,
+    #currentThemeLabel {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dropdown-trigger,
+    .menu-trigger {
+        max-width: 100%;
+        min-width: 0 !important;
+    }
+
+    main > section > .container,
+    #packages > .container,
+    #services > .container {
+        width: min(92%, 1240px);
+        margin-inline: auto;
+    }
+
+    .grid-4,
+    .grid-2,
+    .works-grid {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .grid-4 > *,
+    .grid-2 > *,
+    .works-grid > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    h1, h2, h3, h4, p, li, label, button, a, span {
+        overflow-wrap: anywhere;
+    }
+
+    .card,
+    .media-card,
+    .sec-header {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+}
+
+html[lang="en"] body {
+    font-family: 'Tajawal', Arial, sans-serif;
+    letter-spacing: 0;
+}
+
+html[lang="en"] .sec-title {
+    line-height: 1.25;
+}
+
+html[lang="en"] .card p,
+html[lang="en"] .card li {
+    line-height: 1.65;
+}
+
+input, textarea, select, button {
+    font-size: 16px;
+}
+
+@media (min-width: 768px) {
+    input, textarea, select, button {
+        font-size: inherit;
     }
 }
