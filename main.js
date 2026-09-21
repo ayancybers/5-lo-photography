@@ -189,6 +189,8 @@ document.getElementById('site-header').innerHTML = `
     </div>
 `;
 
+document.querySelectorAll('.dropdown-menu').forEach(menu => menu.setAttribute('aria-hidden', 'true'));
+
 document.getElementById('site-footer').innerHTML = `
     <footer>
         <div class="container footer-flex">
@@ -526,20 +528,37 @@ document.documentElement.classList.toggle('lang-en', currentLang !== 'ar');
 document.documentElement.setAttribute('data-theme', currentTheme);
 
 function toggleDropdown(event, dropdownId) {
-    event.stopPropagation();
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        if (menu.id !== dropdownId) {
-            menu.classList.remove('active');
-        }
-    });
-    document.getElementById(dropdownId)?.classList.toggle('active');
-}
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
-window.addEventListener('click', () => {
+    const target = document.getElementById(dropdownId);
+    if (!target) return;
+
+    const wasOpen = target.classList.contains('active');
+
     document.querySelectorAll('.dropdown-menu').forEach(menu => {
         menu.classList.remove('active');
+        menu.setAttribute('aria-hidden', 'true');
     });
-    closeSocialMenu();
+
+    if (!wasOpen) {
+        target.classList.add('active');
+        target.setAttribute('aria-hidden', 'false');
+    }
+}
+
+window.addEventListener('click', (event) => {
+    if (!event.target.closest('.dropdown-wrapper')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('active');
+            menu.setAttribute('aria-hidden', 'true');
+        });
+    }
+    if (!event.target.closest('.social-float')) {
+        closeSocialMenu();
+    }
 });
 
 window.addEventListener('keydown', event => {
@@ -572,7 +591,11 @@ function changeLanguage(lang) {
     adjustQuickBookingPosition();
     applyTranslations();
 
-    // Recalculate reveal/layout after direction changes without changing scroll position.
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('active');
+        menu.setAttribute('aria-hidden', 'true');
+    });
+
     requestAnimationFrame(() => {
         window.dispatchEvent(new Event('resize'));
     });
@@ -784,9 +807,6 @@ if (document.readyState === 'loading') {
     initializeWebsite();
 }
 
-/* ==========================================================
-   PAGE / NAVIGATION MOTION
-   ========================================================== */
 function initPageMotion() {
     document.documentElement.classList.add('page-ready');
     initSiteRevealAnimations();
