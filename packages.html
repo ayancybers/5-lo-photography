@@ -144,6 +144,20 @@
                         </label>
                         
                         
+
+                        <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_booking_day">يوم الحجز
+                            <select id="bookingDay" class="input-box" required>
+                                <option value="" disabled selected data-i18n="booking_day_select">اختر يوم الحجز</option>
+                                <option value="sunday" data-i18n="booking_day_sunday">الأحد</option>
+                                <option value="monday" data-i18n="booking_day_monday">الاثنين</option>
+                                <option value="tuesday" data-i18n="booking_day_tuesday">الثلاثاء</option>
+                                <option value="wednesday" data-i18n="booking_day_wednesday">الأربعاء</option>
+                                <option value="thursday" data-i18n="booking_day_thursday">الخميس</option>
+                                <option value="friday" data-i18n="booking_day_friday">الجمعة</option>
+                                <option value="saturday" data-i18n="booking_day_saturday">السبت</option>
+                            </select>
+                        </label>
+
                         <label style="font-size: 13px; color: var(--text-muted);" data-i18n="form_city">المدينة
                             <select id="clientCity" class="input-box" required>
                                 <option value="" disabled selected data-i18n="city_select">اختر المدينة</option>
@@ -242,6 +256,9 @@
             const phone = document.getElementById('clientPhone').value.replace(/\D/g, '');
             const citySelect = document.getElementById('clientCity');
             const city = citySelect.options[citySelect.selectedIndex].text;
+
+            const bookingDaySelect = document.getElementById('bookingDay');
+            const bookingDay = bookingDaySelect.options[bookingDaySelect.selectedIndex].text;
             const vehicleTypeSelect = document.getElementById('vehicleType');
             const vehicleType = vehicleTypeSelect.options[vehicleTypeSelect.selectedIndex].text;
             const vehicleModel = cleanBookingText(document.getElementById('vehicleModel').value, 80) ||
@@ -255,7 +272,7 @@
                 return;
             }
 
-            const fingerprint = [name.toLowerCase(), phone, city, vehicleType, vehicleModel.toLowerCase(), pkg, details.toLowerCase()].join('|');
+            const fingerprint = [name.toLowerCase(), phone, city, bookingDay, vehicleType, vehicleModel.toLowerCase(), pkg, details.toLowerCase()].join('|');
             const lastFingerprint = localStorage.getItem('booking_last_fingerprint');
             const lastFingerprintAt = Number(localStorage.getItem('booking_last_fingerprint_at') || 0);
             if (fingerprint === lastFingerprint && Date.now() - lastFingerprintAt < DUPLICATE_WINDOW_MS) {
@@ -264,17 +281,19 @@
             }
 
             const message = currentLang === 'ar'
-                ? `مرحباً Cinematic Car Photographer ، أرغب بحجز موعد:\n` +
+                ? `مرحباً Cinematic Car Photographer، أرغب بحجز موعد:\n` +
                   `- الاسم: ${name}\n` +
                   `- رقم التواصل: ${phone}\n` +
+                  `- يوم الحجز: ${bookingDay}\n` +
                   `- المدينة: ${city}\n` +
                   `- نوع السيارة: ${vehicleType}\n` +
                   `- الماركة والموديل: ${vehicleModel}\n` +
                   `- الباقة: ${pkg}\n` +
                   `- التفاصيل: ${details}`
-                : `Hello Cinematic Car Photographer  , I would like to book a session:\n` +
+                : `Hello Cinematic Car Photographer, I would like to book a session:\n` +
                   `- Name: ${name}\n` +
                   `- Phone: ${phone}\n` +
+                  `- Booking Day: ${bookingDay}\n` +
                   `- City: ${city}\n` +
                   `- Vehicle Type: ${vehicleType}\n` +
                   `- Make & Model: ${vehicleModel}\n` +
@@ -301,7 +320,7 @@
                     packageType: pkg,
                     carType: `${vehicleType} - ${vehicleModel}`,
                     shootRegion: city,
-                    notes: details
+                    notes: `Booking Day: ${bookingDay} | ${details}`
                 }),
                 keepalive: true
             }).catch(error => {
