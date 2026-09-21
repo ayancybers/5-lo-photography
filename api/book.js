@@ -14,6 +14,7 @@ export default async function handler(req, res) {
             carType,
             shootRegion,
             phone,
+            bookingDay,
             notes
         } = req.body || {};
 
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
         const bookingPackage = clean(packageType, 120) || 'غير محدد';
         const bookingCar = clean(carType, 140) || 'غير محدد';
         const bookingRegion = clean(shootRegion, 80) || 'غير محدد';
+        const bookingDayValue = clean(bookingDay, 40) || 'غير محدد';
         const bookingNotes = clean(notes, 1000) || 'لا توجد ملاحظات';
 
         const normalizedPhone = bookingPhone.replace(/\D/g, '');
@@ -83,6 +85,11 @@ export default async function handler(req, res) {
                         {
                             name: '📍 منطقة التصوير',
                             value: bookingRegion,
+                            inline: true
+                        },
+                        {
+                            name: '📅 يوم الحجز',
+                            value: bookingDayValue,
                             inline: true
                         },
                         {
