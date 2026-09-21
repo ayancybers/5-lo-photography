@@ -842,9 +842,6 @@ function initSiteRevealAnimations() {
     elements.forEach(el => observer.observe(el));
 }
 
-/* ==========================================================
-   MOBILE HEADER LABELS
-   ========================================================== */
 function updateMobileHeaderLabels() {
     const langLabel = document.getElementById('currentLangLabel');
     const themeLabel = document.getElementById('currentThemeLabel');
