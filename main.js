@@ -579,26 +579,50 @@ function initSocial(){
   })
 }
 function initVideos(){
-  document.querySelectorAll('video').forEach(v=>{
+  const startVideo=v=>{
     v.controls=false;
     v.muted=true;
     v.defaultMuted=true;
+    v.autoplay=true;
     v.playsInline=true;
-    const play=()=>v.play().catch(()=>{
-    });
+    v.preload='auto';
+    v.setAttribute('muted','');
+    v.setAttribute('autoplay','');
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    const play=()=>{
+      const p=v.play();
+      if(p&&typeof p.catch==='function')p.catch(()=>{});
+    };
     if(v.readyState>=2)play();
-    else v.addEventListener('loadeddata',play,{
-      once:true
-    })
+    v.addEventListener('loadedmetadata',play);
+    v.addEventListener('loadeddata',play);
+    v.addEventListener('canplay',play);
+    v.addEventListener('pause',()=>{
+      if(!document.hidden)play();
+    });
+  };
+  document.querySelectorAll('video').forEach(startVideo);
+  const resumeVideos=()=>{
+    document.querySelectorAll('video[autoplay]').forEach(v=>{
+      v.muted=true;
+      const p=v.play();
+      if(p&&typeof p.catch==='function')p.catch(()=>{});
+    });
+  };
+  document.addEventListener('touchstart',resumeVideos,{once:true,passive:true});
+  document.addEventListener('pointerdown',resumeVideos,{once:true,passive:true});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')resumeVideos();
   });
   if('IntersectionObserver'in window){
     const o=new IntersectionObserver(es=>es.forEach(e=>{
-      if(e.isIntersecting)e.target.play().catch(()=>{
-      })
-    }),{
-      threshold:.12
-    });
-    document.querySelectorAll('video').forEach(v=>o.observe(v))
+      if(e.isIntersecting){
+        const p=e.target.play();
+        if(p&&typeof p.catch==='function')p.catch(()=>{});
+      }
+    }),{threshold:.12});
+    document.querySelectorAll('video').forEach(v=>o.observe(v));
   }
 }
 function initPackageButtons(){
