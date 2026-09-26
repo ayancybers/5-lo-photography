@@ -1525,3 +1525,18 @@ body.page-packages main.packages-v57{
         max-width: calc(100vw - 12px);
     }
 }
+
+@media (max-width: 700px) {
+    .page-packages .booking-form input,
+    .page-packages .booking-form select,
+    .page-packages .booking-form textarea,
+    .page-packages .booking-form button {
+        font-size: 16px !important;
+    }
+
+    .page-packages .booking-form input,
+    .page-packages .booking-form select,
+    .page-packages .booking-form textarea {
+        min-height: 52px;
+    }
+}
