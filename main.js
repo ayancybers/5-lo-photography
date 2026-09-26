@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: '966597561765',
   instagram: '5lo.63',
   tiktok: 'xzlav.1',
-  version: '6.7.0'
+  version: '6.9.0'
 });
 
 const translations = {
@@ -70,6 +70,7 @@ const translations = {
     "process_3_desc": "تنفيذ الرولينق أو التصوير الثابت حسب الباقة.",
     "process_4_title": "التسليم",
     "process_4_desc": "تسليم الملفات أو النسخة المعدلة حسب الطلب.",
+    "process_4_note": "لضمان سرعة التسليم، يرجى تحميل تطبيق DJI Mimo.",
     "cta_label": "READY WHEN YOU ARE",
     "cta_title": "خلّنا نصنع لقطة تستاهل تنحفظ.",
     "cta_button": "احجز الآن",
@@ -243,6 +244,7 @@ const translations = {
     "process_3_desc": "Rolling or static coverage based on your package.",
     "process_4_title": "Delivery",
     "process_4_desc": "Receive originals or edited media as requested.",
+    "process_4_note": "For faster delivery, please download the DJI Mimo app.",
     "cta_label": "READY WHEN YOU ARE",
     "cta_title": "Let’s create a frame worth keeping.",
     "cta_button": "Book now",
