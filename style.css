@@ -1,4 +1,6 @@
-
+/* ==========================================================
+   5LO PHOTOGRAPHY - STYLESHEET (LOADER & MAIN STYLES)
+   ========================================================== */
 
 :root[data-theme="relax"]{
   --bg:#242829; --bg2:#2b3031; --surface:#303738; --surface2:#394143;
@@ -229,6 +231,17 @@ body:not(.page-home){padding-top:113px}
 }
 .cta-card-v4 h2{font-size:clamp(2rem,4vw,3.8rem);line-height:1.02;letter-spacing:-.045em;margin:9px 0}
 .cta-card-v4 p{color:var(--muted);font-size:13px}
+.process-v4-note {
+  margin-top: 16px !important;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--accent) !important;
+  font-size: 12px !important;
+  line-height: 1.75 !important;
+  font-weight: 800 !important;
+}
+
+
 .final-cta-v4{padding-bottom:130px}
 
 
@@ -388,7 +401,6 @@ body:not(.page-home){padding-top:113px}
 }
 
 
-
 :root[data-theme="light"] .site-header{background:rgba(255,255,255,.94);border-bottom-color:rgba(11,21,34,.10)}
 :root[data-theme="light"] .announcement-bar{background:rgba(255,255,255,.96);color:#526272;border-bottom-color:rgba(11,21,34,.08)}
 :root[data-theme="light"] .nav-icon-btn,
@@ -435,8 +447,6 @@ body:not(.page-home){padding-top:113px}
 @media (max-width:900px){.brand-logo-image{width:46px;height:46px;flex-basis:46px;border-radius:14px}.studio-layout-v5{grid-template-columns:1fr}.studio-feature-v5{min-height:0}.studio-feature-media-v5{min-height:440px}.studio-stack-v5{grid-template-rows:repeat(3,minmax(0,1fr))}}
 @media (max-width:640px){.brand-logo-image{width:42px;height:42px;flex-basis:42px;border-radius:50%}.home-loader-mark{width:82px;height:82px;border-radius:23px}.home-loader-mark img{border-radius:18px}.studio-feature-media-v5{min-height:350px}.studio-feature-copy-v5{flex-direction:column;align-items:flex-start;gap:18px}.studio-feature-badge{font-size:8px;right:14px;bottom:14px}.studio-stack-v5{gap:11px}.studio-stack-v5 .v4-mini-card{padding:22px}.studio-stack-v5 .v4-mini-card h3{margin-top:22px;font-size:25px}}
 @media (prefers-reduced-motion:reduce){.home-loader{transition:none}.home-loader-line span{transition:none}}
-
-
 
 
 :root{--chrome-h:81px;--logo-blue:#4fc8ee;--logo-deep:#0c3146}
@@ -591,7 +601,6 @@ ul,ol{list-style:none;margin:0;padding:0}
   .page-packages .package-card p{font-size:12px !important;line-height:1.75 !important;}
   .page-packages .price{font-size:36px !important;}
 }
-
 
 
 .brand-logo-image,
