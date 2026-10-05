@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: '966597561765',
   instagram: '5lo.63',
   tiktok: 'xzlav.1',
-  version: '8.5.0'
+  version: '8.6.0'
 });
 
 const translations = {
@@ -13,6 +13,7 @@ const translations = {
     "nav_works": "المعرض",
     "nav_services": "الخدمات",
     "nav_packages": "الباقات والحجز",
+    "nav_terms": "الشروط والأحكام",
     "menu_btn": "القائمة",
     "quick_booking": "حجز سريع",
     "dev_credit": "صُنع بواسطة",
@@ -189,6 +190,7 @@ const translations = {
     "nav_works": "Gallery",
     "nav_services": "Services",
     "nav_packages": "Packages & Booking",
+    "nav_terms": "Terms & Conditions",
     "menu_btn": "Menu",
     "quick_booking": "Quick Booking",
     "dev_credit": "Built by",
@@ -438,7 +440,8 @@ function buildHeader(){
     ['/','nav_home','link-index'],
     ['/works','nav_works','link-works'],
     ['/services','nav_services','link-services'],
-    ['/packages','nav_packages','link-packages']
+    ['/packages','nav_packages','link-packages'],
+    ['/terms','nav_terms','link-terms']
   ];
   const langLabel=currentLang==='ar'?'AR':'EN';
   document.getElementById('site-header').innerHTML=`
@@ -489,6 +492,7 @@ function buildHeader(){
         <a href="/works" data-i18n="nav_works">${translations[currentLang].nav_works}</a>
         <a href="/services" data-i18n="nav_services">${translations[currentLang].nav_services}</a>
         <a href="/packages" data-i18n="nav_packages">${translations[currentLang].nav_packages}</a>
+        <a href="/terms" data-i18n="nav_terms">${translations[currentLang].nav_terms}</a>
       </div>
     </div>`;
   const page=location.pathname.replace(/\/+$/,'')||'/';

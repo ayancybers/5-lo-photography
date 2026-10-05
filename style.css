@@ -1971,3 +1971,5 @@ body.gallery-lightbox-open{overflow:hidden}
   .terms-consent{font-size:11px}
   .terms-consent-note{font-size:9px}
 }
+@media(min-width:901px) and (max-width:1180px){.nav-container{gap:12px}.nav-links{gap:2px}.nav-links a{padding-inline:8px;font-size:11px}}
+.fullscreen-menu.active .fullscreen-inner>a:nth-of-type(5){animation-delay:.16s}
