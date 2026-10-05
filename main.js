@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: '966597561765',
   instagram: '5lo.63',
   tiktok: 'xzlav.1',
-  version: '8.8.0'
+  version: '8.9.1'
 });
 
 const translations = {
@@ -207,7 +207,7 @@ const translations = {
     "hero_title": "Make your car <span class=\"accent-text\">move</span> while staying still.",
     "hero_desc": "Rolling, static photography and cinematic video with a clean visual language built around your car.",
     "btn_start": "Start booking",
-    "btn_works": "View works",
+    "btn_works": "View gallery",
     "hero_meta_1": "Rolling",
     "hero_meta_2": "Cinematic video",
     "hero_meta_3": "Social-ready",
@@ -400,7 +400,7 @@ Object.assign(translations.en,{
   hero_v4_kicker:'MOVEMENT · DETAIL · PRESENCE',
   hero_v4_title:'Your car deserves<br><span class="accent-text">more than a photo.</span>',
   hero_v4_desc:'Rolling, static and cinematic car content built with a clean visual language that keeps the car in focus.',
-  hero_v4_cta:'Start booking', hero_v4_gallery:'View works',
+  hero_v4_cta:'Start booking', hero_v4_gallery:'View gallery',
   hero_v4_proof1:'Rolling', hero_v4_proof2:'Static', hero_v4_proof3:'Cinematic film', hero_v4_proof4:'Social-ready',
   hero_v4_side_label:'THE 5LO SIGNATURE', hero_v4_side_title:'Angle. Motion. Presence.',
   hero_v4_side_desc:'We shape lines, stance and light into a frame or film with its own character.',
@@ -440,7 +440,7 @@ let currentTheme=['relax','dark','light'].includes(savedTheme)?savedTheme:'relax
 function buildHeader(){
   const nav=[
     ['/','nav_home','link-index'],
-    ['/works','nav_works','link-works'],
+    ['/gallery','nav_works','link-works'],
     ['/services','nav_services','link-services'],
     ['/packages','nav_packages','link-packages'],
     ['/terms','nav_terms','link-terms']
@@ -491,7 +491,7 @@ function buildHeader(){
       <div class="fullscreen-inner">
         <div class="fullscreen-top"><span class="mini-label">${SITE.brand.toUpperCase()}</span><button type="button" class="close-menu" id="closeMenu" aria-label="Close menu">×</button></div>
         <a href="/" data-i18n="nav_home">${translations[currentLang].nav_home}</a>
-        <a href="/works" data-i18n="nav_works">${translations[currentLang].nav_works}</a>
+        <a href="/gallery" data-i18n="nav_works">${translations[currentLang].nav_works}</a>
         <a href="/services" data-i18n="nav_services">${translations[currentLang].nav_services}</a>
         <a href="/packages" data-i18n="nav_packages">${translations[currentLang].nav_packages}</a>
         <a href="/terms" data-i18n="nav_terms">${translations[currentLang].nav_terms}</a>
@@ -505,7 +505,7 @@ function buildHeader(){
 }
 
 function buildFooter(){
-  document.getElementById('site-footer').innerHTML=`<footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><img class="footer-logo" src="${SITE.logo}" alt="5lo Photography" decoding="async"><span class="brand-copy"><strong>5lo</strong><em>Photography</em></span></div></div><div class="footer-actions"><span data-i18n="footer_loc">${translations[currentLang].footer_loc}</span><a href="/terms" data-i18n="footer_terms">${translations[currentLang].footer_terms}</a><a href="#top" data-i18n="footer_top">${translations[currentLang].footer_top}</a></div></div><div class="container footer-bottom"><span>5lo Photography</span><a class="dev-credit" href="https://ayancybers.store/info" target="_blank" rel="noopener noreferrer" aria-label="Ayan Developer — ${translations[currentLang].dev_credit}"><span class="dev-credit-label" data-i18n="dev_credit">${translations[currentLang].dev_credit}</span><span class="dev-credit-name">Ayan Developer</span><span class="dev-credit-icon" aria-hidden="true">&lt;/&gt;</span><span class="dev-credit-arrow" aria-hidden="true">↗</span></a><span>v${SITE.version}</span></div></footer><div class="social-float" id="socialFloat"><div class="social-menu" id="socialMenu" aria-hidden="true"><a href="https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent('مرحباً، أود الاستفسار عن خدمات 5lo Photography')}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-whatsapp" aria-hidden="true"></span><span data-i18n="social_whatsapp">${translations[currentLang].social_whatsapp}</span></a><a href="https://instagram.com/${SITE.instagram}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-instagram" aria-hidden="true"></span><span data-i18n="social_instagram">${translations[currentLang].social_instagram}</span></a><a href="https://www.tiktok.com/@${SITE.tiktok}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-tiktok" aria-hidden="true"></span><span data-i18n="social_tiktok">${translations[currentLang].social_tiktok}</span></a></div><button type="button" class="social-toggle" id="socialToggle" aria-expanded="false" aria-label="Social"><span class="social-chat-icon" aria-hidden="true"></span></button></div>`
+  document.getElementById('site-footer').innerHTML=`<footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><img class="footer-logo" src="${SITE.logo}" alt="5lo Photography" decoding="async"><span class="brand-copy"><strong>5lo</strong><em>Photography</em></span></div></div><div class="footer-actions"><span data-i18n="footer_loc">${translations[currentLang].footer_loc}</span><a href="/terms" data-i18n="footer_terms">${translations[currentLang].footer_terms}</a><a href="#top" data-i18n="footer_top">${translations[currentLang].footer_top}</a></div></div><div class="container footer-bottom"><div class="footer-signature"><span>5lo Photography</span><span>v${SITE.version}</span></div><a class="dev-credit" href="https://ayancybers.store/info" target="_blank" rel="noopener noreferrer" aria-label="Ayan Developer — ${translations[currentLang].dev_credit}"><span class="dev-credit-label" data-i18n="dev_credit">${translations[currentLang].dev_credit}</span><span class="dev-credit-name">Ayan Developer</span><span class="dev-credit-icon" aria-hidden="true">&lt;/&gt;</span><span class="dev-credit-arrow" aria-hidden="true">↗</span></a></div></footer><div class="social-float" id="socialFloat"><div class="social-menu" id="socialMenu" aria-hidden="true"><a href="https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent('مرحباً، أود الاستفسار عن خدمات 5lo Photography')}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-whatsapp" aria-hidden="true"></span><span data-i18n="social_whatsapp">${translations[currentLang].social_whatsapp}</span></a><a href="https://instagram.com/${SITE.instagram}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-instagram" aria-hidden="true"></span><span data-i18n="social_instagram">${translations[currentLang].social_instagram}</span></a><a href="https://www.tiktok.com/@${SITE.tiktok}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-tiktok" aria-hidden="true"></span><span data-i18n="social_tiktok">${translations[currentLang].social_tiktok}</span></a></div><button type="button" class="social-toggle" id="socialToggle" aria-expanded="false" aria-label="Social"><span class="social-chat-icon" aria-hidden="true"></span></button></div>`
 }
 function applyThemeMeta(){
   const colors={relax:'#25373a',dark:'#03070c',light:'#f4f8f9'};
@@ -616,32 +616,36 @@ function initSocial(){
   })
 }
 function initVideos(){
+  const inViewport=v=>{
+    if(!v.isConnected||v.closest('.is-hidden'))return false;
+    const r=v.getBoundingClientRect();
+    return r.width>0&&r.height>0&&r.bottom>0&&r.top<window.innerHeight
+  };
   const startVideo=v=>{
     v.controls=false;
     v.muted=true;
     v.defaultMuted=true;
-    v.autoplay=true;
+    v.autoplay=false;
     v.playsInline=true;
-    v.preload='auto';
+    v.preload='none';
     v.setAttribute('muted','');
-    v.setAttribute('autoplay','');
+    v.removeAttribute('autoplay');
     v.setAttribute('playsinline','');
     v.setAttribute('webkit-playsinline','');
     const play=()=>{
+      if(document.hidden||!inViewport(v))return;
       const p=v.play();
       if(p&&typeof p.catch==='function')p.catch(()=>{});
     };
-    if(v.readyState>=2)play();
-    v.addEventListener('loadedmetadata',play);
     v.addEventListener('loadeddata',play);
-    v.addEventListener('canplay',play);
     v.addEventListener('pause',()=>{
-      if(!document.hidden)play();
+      if(!document.hidden&&inViewport(v))play();
     });
   };
   document.querySelectorAll('video').forEach(startVideo);
   const resumeVideos=()=>{
-    document.querySelectorAll('video[autoplay]').forEach(v=>{
+    document.querySelectorAll('video').forEach(v=>{
+      if(!inViewport(v))return;
       v.muted=true;
       const p=v.play();
       if(p&&typeof p.catch==='function')p.catch(()=>{});
@@ -655,11 +659,22 @@ function initVideos(){
   if('IntersectionObserver'in window){
     const o=new IntersectionObserver(es=>es.forEach(e=>{
       if(e.isIntersecting){
-        const p=e.target.play();
-        if(p&&typeof p.catch==='function')p.catch(()=>{});
-      }
-    }),{threshold:.12});
+        const v=e.target;
+        v.preload='metadata';
+        if(v.networkState===HTMLMediaElement.NETWORK_EMPTY)v.load();
+        if(inViewport(v)){
+          const p=v.play();
+          if(p&&typeof p.catch==='function')p.catch(()=>{});
+        }
+      }else e.target.pause();
+    }),{threshold:.01,rootMargin:'120px 0px'});
     document.querySelectorAll('video').forEach(v=>o.observe(v));
+  }else{
+    document.querySelectorAll('video').forEach(v=>{
+      v.preload='metadata';
+      v.load();
+      if(inViewport(v)){const p=v.play();if(p&&typeof p.catch==='function')p.catch(()=>{})}
+    });
   }
 }
 function initPackageButtons(){

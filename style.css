@@ -1600,6 +1600,18 @@ body.page-packages main.packages-v57{
 @media(max-width:900px){
   .page-packages .package-v57-ribbon-desktop{display:none}
 }
+/* Keep gallery cards visible on mobile while media decodes. */
+.page-works .reveal-item{opacity:1;transform:none}
+/* Stack the compact developer credit beneath the brand and site version. */
+.footer-bottom{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.footer-signature{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:9px;letter-spacing:.08em}
+.footer-signature span:first-child{color:var(--text);font-weight:800;letter-spacing:.02em}
+.dev-credit{min-height:0;padding:4px 8px;gap:6px;border-color:var(--line);background:transparent;box-shadow:none}
+.dev-credit:hover{transform:none;box-shadow:none}
+.dev-credit-label{display:none}
+.dev-credit-name{font-size:9px}
+.dev-credit-icon{width:18px;height:18px;border-radius:6px;font-size:8px}
+.dev-credit-arrow{font-size:11px}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
 @media(max-width:900px){.footer-bottom{justify-content:center;text-align:center}.dev-credit{padding:6px 10px;gap:7px}}
 @media(max-width:520px){.footer-bottom{row-gap:12px}.dev-credit{padding:6px 9px}.dev-credit-label{font-size:9px}.dev-credit-name{font-size:10px}.dev-credit-icon{width:23px;height:23px}}
@@ -1985,3 +1997,14 @@ body.gallery-lightbox-open{overflow:hidden}
 }
 @media(min-width:901px) and (max-width:1180px){.nav-container{gap:12px}.nav-links{gap:2px}.nav-links a{padding-inline:8px;font-size:11px}}
 .fullscreen-menu.active .fullscreen-inner>a:nth-of-type(5){animation-delay:.16s}
+
+/* Footer credits: compact and centered under the brand/version line. */
+.footer-bottom{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center}
+.footer-signature{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:9px;letter-spacing:.08em}
+.footer-signature span:first-child{color:var(--text);font-weight:800;letter-spacing:.02em}
+.footer-bottom .dev-credit{min-height:0;padding:3px 7px;gap:5px;border-color:var(--line);background:transparent;box-shadow:none}
+.footer-bottom .dev-credit:hover{transform:none;box-shadow:none}
+.footer-bottom .dev-credit-label{display:none}
+.footer-bottom .dev-credit-name{font-size:9px}
+.footer-bottom .dev-credit-icon{width:17px;height:17px;border-radius:5px;font-size:8px}
+.footer-bottom .dev-credit-arrow{font-size:10px}
