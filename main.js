@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: '966597561765',
   instagram: '5lo.63',
   tiktok: 'xzlav.1',
-  version: '8.9.1'
+  version: '8.9.4'
 });
 
 const translations = {
@@ -885,20 +885,42 @@ function initTransitions(){
 }
 function enableProtection(){
   const formField=t=>t&&['INPUT','TEXTAREA','SELECT'].includes(t.tagName);
+  let noticeTimer;
+  const warnVisitor=()=>{
+    let notice=document.getElementById('code-protection-notice');
+    if(!notice){
+      notice=document.createElement('div');
+      notice.id='code-protection-notice';
+      notice.className='code-protection-notice';
+      notice.setAttribute('role','status');
+      notice.setAttribute('aria-live','polite');
+      document.body.append(notice)
+    }
+    notice.textContent=currentLang==='ar'?'محتوى 5lo Photography محمي.':'5lo Photography content is protected.';
+    notice.classList.add('is-visible');
+    clearTimeout(noticeTimer);
+    noticeTimer=setTimeout(()=>notice.classList.remove('is-visible'),2800)
+  };
   document.addEventListener('contextmenu',e=>{
-    if(!formField(e.target))e.preventDefault()
+    if(!formField(e.target)){e.preventDefault();warnVisitor()}
   });
   document.addEventListener('dragstart',e=>{
-    if(e.target.matches?.('img,video'))e.preventDefault()
+    if(e.target.matches?.('img,video')){e.preventDefault();warnVisitor()}
   });
   document.addEventListener('keydown',e=>{
     const k=String(e.key).toLowerCase();
-    const blocked=e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k))||(e.ctrlKey&&k==='u')||(e.metaKey&&e.altKey&&k==='i');
+    const zoomShortcut=(e.ctrlKey||e.metaKey)&&['+','=','-','_','0'].includes(k);
+    const blocked=zoomShortcut||e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c','k'].includes(k))||(e.ctrlKey&&k==='u')||(e.metaKey&&e.altKey&&['i','j','c'].includes(k))||(e.metaKey&&k==='u');
     if(blocked){
       e.preventDefault();
-      e.stopPropagation()
+      e.stopPropagation();
+      warnVisitor()
     }
   },true)
+  const blockGesture=e=>e.preventDefault();
+  ['gesturestart','gesturechange','gestureend'].forEach(name=>document.addEventListener(name,blockGesture,{passive:false}));
+  document.addEventListener('touchmove',e=>{if(e.touches?.length>1)e.preventDefault()},{passive:false});
+  console.warn('%c5lo Photography — content protected. Do not copy or reuse without permission.','color:#b9c6c3;font-weight:bold');
 }
 function initHomeLoader(){
   const loader=document.getElementById('home-loader');
