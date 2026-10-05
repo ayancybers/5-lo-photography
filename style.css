@@ -1588,6 +1588,18 @@ body.page-packages main.packages-v57{
 .btn-main:hover::after,.btn-outline:hover::after,.btn-dark:hover::after{transform:translateX(120%)}
 .package-v57-card,.service-card,.work-card{transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
 .package-v57-card:hover,.service-card:hover,.work-card:hover{border-color:var(--line-strong);box-shadow:0 28px 76px rgba(0,0,0,.22)}
+
+/* Keep package prices in the same physical order in Arabic and English. */
+.page-packages .packages-v57-grid{direction:rtl!important}
+@media(min-width:901px){
+  .page-packages .package-v57-featured{background:linear-gradient(155deg,var(--surface),var(--surface2));border-color:var(--line)}
+  .page-packages .package-v57-featured>.package-v57-ribbon{display:none}
+  .page-packages .package-v57-desktop-featured{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 18%,var(--surface)),var(--surface));border-color:var(--line-strong);box-shadow:0 28px 76px rgba(0,0,0,.2)}
+  .page-packages .package-v57-ribbon-desktop{display:block}
+}
+@media(max-width:900px){
+  .page-packages .package-v57-ribbon-desktop{display:none}
+}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
 @media(max-width:900px){.footer-bottom{justify-content:center;text-align:center}.dev-credit{padding:6px 10px;gap:7px}}
 @media(max-width:520px){.footer-bottom{row-gap:12px}.dev-credit{padding:6px 9px}.dev-credit-label{font-size:9px}.dev-credit-name{font-size:10px}.dev-credit-icon{width:23px;height:23px}}

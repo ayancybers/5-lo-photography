@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: '966597561765',
   instagram: '5lo.63',
   tiktok: 'xzlav.1',
-  version: '8.6.0'
+  version: '8.7.0'
 });
 
 const translations = {
@@ -113,6 +113,7 @@ const translations = {
     "pkg1_f1": "✓ تصوير رولينق فقط",
     "pkg1_f2": "✓ تسليم الملفات الأصلية",
     "pkg2_ribbon": "الأكثر طلباً",
+    "pkg3_ribbon": "الأكثر طلباً",
     "pkg2_title": "رولينق / مونتاج",
     "pkg2_desc": "تغطية متحركة بإيقاع احترافي وجاهزة للنشر.",
     "pkg2_f1": "✓ تصوير رولينق + 10 مقاطع",
@@ -290,6 +291,7 @@ const translations = {
     "pkg1_f1": "✓ Rolling shots only",
     "pkg1_f2": "✓ Original files delivery",
     "pkg2_ribbon": "MOST REQUESTED",
+    "pkg3_ribbon": "MOST REQUESTED",
     "pkg2_title": "Rolling / Edit",
     "pkg2_desc": "Dynamic rolling coverage, edited and ready to publish.",
     "pkg2_f1": "✓ Rolling shots + 10 clips",
