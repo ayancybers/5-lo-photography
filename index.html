@@ -1,173 +1,145 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
+<html lang="en" dir="ltr" data-theme="dark">
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5lo Photography | Soon </title>
+    <script src="theme-init.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#09111a">
+    <meta name="color-scheme" content="dark light">
+    <meta name="description"
+      content="تصوير رولينق وسيارات وفيديو سينمائي في الدمام والخبر والقطيف.">
+    <meta name="robots" content="index,follow">
+    <title>الرئيسية | 5lo Photography</title>
+    <link rel="icon" href="assets/gallery/logo.jpeg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', sans-serif;
-        }
-
-        body {
-            background-color: #0d0e12;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(0, 150, 255, 0.15) 0%, rgba(0,0,0,0) 70%);
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .container {
-            max-width: 550px;
-            width: 100%;
-            background: rgba(22, 24, 31, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            position: relative;
-            z-index: 1;
-        }
-
-        .icon-box {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px auto;
-            font-size: 32px;
-            color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-            animation: pulse 2.5s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(59, 130, 246, 0.4); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #a1a1aa;
-            margin-bottom: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #ffffff;
-            line-height: 1.4;
-        }
-
-        p {
-            font-size: 15px;
-            color: #9ca3af;
-            line-height: 1.7;
-            margin-bottom: 30px;
-        }
-
-        .btn-whatsapp {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 16px 24px;
-            background-color: #25d366;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 17px;
-            font-weight: 700;
-            border-radius: 14px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.25);
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #20bd5a;
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(37, 211, 102, 0.35);
-        }
-
-        .btn-whatsapp:active {
-            transform: translateY(0);
-        }
-
-        .btn-whatsapp i {
-            font-size: 22px;
-        }
-
-        .footer-text {
-            margin-top: 25px;
-            font-size: 13px;
-            color: #6b7280;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="icon-box">
-            <i class="fa-solid fa-wrench"></i>
-        </div>
-
-        <div class="badge">
-            <i class="fa-solid fa-arrows-rotate fa-spin" style="margin-left: 6px;"></i> تحديثات مستمرة
-        </div>
-
-        <h1>الموقع تحت الصيانة حالياً</h1>
-        
-        <p>نعمل على إضافة التحديث الجديد لتقديم تجربة أفضل لكم.<br>لجلسات حجز التصوير والطلبات المستعجلة، يرجى التواصل معنا مباشرة عبر الواتساب.</p>
-
-        <a href="https://wa.me/966597561765" target="_blank" class="btn-whatsapp">
-            <i class="fa-brands fa-whatsapp"></i>
-            الحجز عبر الواتساب
-        </a>
-
-        <div class="footer-text">
-            شكراً لانتظاركم وتفهمكم 🖤
-        </div>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=15.25.0">
+  </head>
+  <body id="top" class="page-home">
+    <div class="home-loader" id="home-loader" aria-live="polite">
+      <div class="home-loader-stage">
+        <div class="home-loader-status"><span id="homeLoaderState">PREPARING THE FRAME</span><strong id="homeLoaderPercent">0%</strong></div>
+        <div class="home-loader-meter" role="progressbar" aria-label="Page loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="homeLoaderProgress"></span></div>
+      </div>
     </div>
+    <noscript><style>#home-loader{display:none!important}</style></noscript>
+    <div id="site-header"></div>
+    <main>
+      <section class="v15-home-hero">
+        <div class="v15-hero-visual">
+          <video autoplay muted loop playsinline webkit-playsinline preload="metadata"
+            poster="assets/gallery/background-poster-4k.jpg">
+            <source src="assets/videos/background-4k.mp4" type="video/mp4">
+            <source src="https://e.top4top.io/m_3962r3emz1.mp4" type="video/mp4">
+            <source src="assets/videos/background-v15.mp4" type="video/mp4">
+          </video>
+          <div class="v15-hero-shade"></div>
+        </div>
+        <div class="v15-wrap v15-home-grid">
+          <div class="v15-hero-copy">
+            <span
+              class="v15-eyebrow"><i></i><span data-i18n="hero_v4_overline">5LO / AUTOMOTIVE VISUAL STUDIO</span></span>
+            <p class="v15-kicker" data-i18n="hero_v4_kicker">حركة · تفاصيل · حضور</p>
+            <h1
+              data-i18n="hero_v4_title">سيارتك تستاهل<br><span class="accent-text">أكثر من صورة.</span></h1>
+            <p class="v15-lead"
+              data-i18n="hero_v4_desc">نصوّر الرولينق، الثابت، والفيديو السينمائي بأسلوب نظيف يخلي حضور السيارة واضح من أول فريم.</p>
+            <div class="v15-actions">
+              <a href="/packages#contact" class="v15-button" data-i18n="hero_v4_cta">ابدأ الحجز</a>
+              <a href="/gallery" class="v15-button v15-button-quiet"
+                data-i18n="hero_v4_gallery">شوف الأعمال</a>
+            </div>
+            <div class="v15-stats">
+              <div><b>01</b><span data-i18n="hero_v4_proof1">رولينق</span></div>
+              <div><b>02</b><span data-i18n="hero_v4_proof2">تصوير ثابت</span></div>
+              <div><b>03</b><span data-i18n="hero_v4_proof3">فيديو سينمائي</span></div>
+              <div><b>04</b><span data-i18n="hero_v4_proof4">محتوى جاهز للنشر</span></div>
+            </div>
+          </div>
+          <div class="v15-hero-index">
+            <span>01 / 05</span>
+            <strong>FRAME<br>YOUR<br>DRIVE</strong>
+            <span>5LO VISUAL STUDIO</span>
+          </div>
+        </div>
+        <a class="v15-scroll"
+          href="#approach"><span></span><small data-i18n="scroll_down">انزل</small></a>
+      </section>
 
-</body>
+      <section id="approach" class="v15-block">
+        <div class="v15-wrap">
+          <header class="v15-section-head">
+            <div><span class="v15-index">01 / APPROACH</span><h2 data-i18n="studio_v4_title">مو مجرد تصوير.<br><span class="accent-text">هذا أسلوب.</span></h2></div>
+            <p
+              data-i18n="studio_v4_desc">من الطريق إلى الجراج، ومن اللقطة السريعة إلى الفيلم — كل تفصيلة محسوبة عشان تطلع سيارتك بالشكل اللي تستحقه.</p>
+          </header>
+          <div class="v15-service-strip">
+            <article
+              class="v15-service-tile reveal-item"><span data-i18n="feature1_label">ROLLING</span><h3 data-i18n="feature1_title">حركة محسوبة.</h3><p data-i18n="feature1_desc">رولينق يبرز خطوط السيارة، الوقفة، والإحساس أثناء الحركة.</p><a href="/services" aria-label="Services">↗</a></article>
+            <article
+              class="v15-service-tile reveal-item"><span data-i18n="feature2_label">STATIC</span><h3 data-i18n="feature2_title">تفاصيل أقرب.</h3><p data-i18n="feature2_desc">لقطات ثابتة تركز على التصميم، التفاصيل، واللمعة.</p><a href="/services" aria-label="Services">↗</a></article>
+            <article
+              class="v15-service-tile reveal-item"><span data-i18n="feature3_label">EDIT</span><h3 data-i18n="feature3_title">إيقاع على ذوقك.</h3><p data-i18n="feature3_desc">مونتاج مرتب ومناسب للنشر على المنصات العمودية.</p><a href="/services" aria-label="Services">↗</a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="v15-block v15-dark-block">
+        <div class="v15-wrap">
+          <header class="v15-section-head">
+            <div><span class="v15-index">SELECTED WORK / 02</span><h2><span data-i18n="selected_t1">لقطات</span> <span class="accent-text" data-i18n="selected_t2">تتكلم.</span></h2></div>
+            <a class="v15-inline-link" href="/gallery" data-i18n="view_all">استعرض المعرض كامل</a>
+          </header>
+          <div class="v15-work-feature" role="region" aria-roledescription="carousel"
+            aria-label="Selected work carousel" tabindex="0">
+            <a class="v15-work-tile v15-work-large" href="/gallery">
+              <img src="https://h.top4top.io/p_3962phl3h1.jpeg" alt="Ford Mustang">
+              <i>↗</i><span>FORD MUSTANG</span><b data-i18n="showcase_2">Static Story</b>
+            </a>
+            <a class="v15-work-tile" href="/gallery">
+              <img src="https://e.top4top.io/p_3962srv2t1.jpeg" alt="Datsun 280ZX">
+              <i>↗</i><span>DATSUN 280ZX</span><b>Classic Lines</b>
+            </a>
+            <a class="v15-work-tile" href="/gallery">
+              <img src="https://f.top4top.io/p_39628sjs42.jpeg" alt="Toyota Camry">
+              <i>↗</i><span>TOYOTA CAMRY</span><b data-i18n="showcase_3">Detail Frame</b>
+            </a>
+            <a class="v15-work-tile" href="/gallery">
+              <img src="https://e.top4top.io/p_3962ecxlu1.jpeg" alt="Hyundai Azera">
+              <i>↗</i><span>HYUNDAI AZERA</span><b data-i18n="showcase_1">Shooting Cinematic</b>
+            </a>
+          </div>
+          <div
+            class="v15-rail-hint"><span>↔</span><span data-i18n="rail_hint">اسحب يمين أو يسار لاستكشاف اللقطات</span><a href="/gallery" data-i18n="view_all">استعرض المعرض كامل</a></div>
+        </div>
+      </section>
+
+      <section class="v15-block">
+        <div class="v15-wrap">
+          <header class="v15-section-head">
+            <div><span class="v15-index">HOW IT WORKS / 03</span><h2><span data-i18n="process_t1">من الفكرة</span> <span class="accent-text" data-i18n="process_t2">إلى التسليم.</span></h2></div>
+          </header>
+          <div class="v15-steps">
+            <article><b>01</b><h3 data-i18n="process_1_title">اختيار الباقة</h3><p data-i18n="process_1_desc">حدد نوع التصوير والمحتوى الذي يناسبك.</p></article>
+            <article><b>02</b><h3 data-i18n="process_2_title">تأكيد الموعد</h3><p data-i18n="process_2_desc">ترسل تفاصيل سيارتك وموقع التصوير واليوم المناسب.</p></article>
+            <article><b>03</b><h3 data-i18n="process_3_title">التصوير</h3><p data-i18n="process_3_desc">تنفيذ الرولينق أو التصوير الثابت حسب الباقة.</p></article>
+            <article><b>04</b><h3 data-i18n="process_4_title">التسليم</h3><p data-i18n="process_4_desc">تسليم الملفات أو النسخة المعدلة حسب الطلب.</p><aside class="delivery-note" data-i18n="process_4_note">لتسليم أسرع، حمّل تطبيق DJI Mimo.</aside></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="v15-booking-cta">
+        <div class="v15-wrap">
+          <div><span class="v15-index" data-i18n="cta_label">READY WHEN YOU ARE</span><h2 data-i18n="cta_title">خلّنا نصنع لقطة تستاهل تنحفظ.</h2><p data-i18n="cta_v4_desc">ابدأ بطلب الحجز، واحنا نرتب معك التفاصيل.</p></div>
+          <a class="v15-button" href="/packages#contact" data-i18n="cta_button">احجز الآن</a>
+        </div>
+      </section>
+    </main>
+    <div id="site-footer"></div>
+    <script src="main.js?v=15.25.0" defer></script>
+    <script src="refresh.js?v=15.25.0" defer></script>
+  </body>
 </html>
