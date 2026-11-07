@@ -135,6 +135,34 @@ async function postWebhook(url, payload) {
   }
 }
 
+async function reportBookingIssue(reason, requestId = "not-created", status = "unknown") {
+  console.error("[booking] Failure", { reason, requestId, status });
+  const logWebhook = process.env.DISCORD_WEBHOOK_URL;
+  if (!logWebhook) return;
+  try {
+    const response = await postWebhook(logWebhook, {
+      username: "5lo Booking Monitor",
+      allowed_mentions: { parse: [] },
+      embeds: [{
+        title: "BOOKING / DELIVERY ISSUE",
+        description: "A booking request could not be fully processed.",
+        color: 0xA84F4F,
+        fields: [
+          { name: "Reason", value: String(reason).slice(0, 200), inline: true },
+          { name: "Request ID", value: String(requestId).slice(0, 100), inline: true },
+          { name: "Status", value: String(status).slice(0, 100), inline: true },
+          { name: "Time", value: new Date().toISOString(), inline: false },
+        ],
+        footer: { text: "5lo Photography | Booking diagnostics" },
+        timestamp: new Date().toISOString(),
+      }],
+    });
+    if (!response.ok) console.error("[booking] Discord diagnostics webhook failed", response.status);
+  } catch (error) {
+    console.error("[booking] Could not deliver diagnostics to Discord", error?.message || error);
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -229,7 +257,7 @@ export default async function handler(req, res) {
     }
 
     if (!webhookUrl) {
-      console.error("[booking] BOOKING_WEB is not configured");
+      await reportBookingIssue("BOOKING_WEB is not configured", "not-created", 500);
       return res.status(500).json({ success: false, error: "Server configuration error" });
     }
 
@@ -275,7 +303,7 @@ export default async function handler(req, res) {
     const response = await postWebhook(webhookUrl, payload);
 
     if (!response.ok) {
-      console.error("[booking] Discord webhook rejected request", { requestId, status: response.status });
+      await reportBookingIssue("BOOKING_WEB rejected the booking", requestId, response.status);
       return res.status(502).json({ success: false, error: "Failed to send booking notification" });
     }
 
@@ -286,7 +314,7 @@ export default async function handler(req, res) {
       package: selectedPackage.price,
     });
   } catch (error) {
-    console.error("[booking] Handler failed", error?.message || error);
+    await reportBookingIssue(error?.message || "Booking handler failed", "not-created", 500);
     return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 }
