@@ -26,6 +26,7 @@ const CITIES = Object.freeze({
   dammam: "الدمام",
   khobar: "الخبر",
   qatif: "القطيف",
+  jubail: "الجبيل",
 });
 
 const DAYS = Object.freeze({

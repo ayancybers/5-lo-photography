@@ -3595,23 +3595,29 @@ body {
 .site-footer .footer-actions {
   display: grid;
   justify-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding-block: 6px 18px;
+  padding-block: 10px 20px;
+  color: var(--v15-muted);
 }
+.site-footer .footer-brand { padding: 8px 20px 14px; }
+.site-footer .footer-brand .brand-copy strong { font-size: 25px;letter-spacing:.04em; }
+.site-footer .footer-brand .brand-copy em { font-size: 9px;letter-spacing:.25em; }
+.site-footer .footer-actions > span { margin-bottom: 3px;color:var(--v15-gold2);font-size:11px;font-weight:700;letter-spacing:.035em; }
 .site-footer .footer-actions a {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
   padding: 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--v15-muted);
   text-decoration: none;
   transition: background .2s ease,border-color .2s ease,color .2s ease;
 }
 .site-footer .footer-actions a:hover {
-  background: var(--v15-panel);
-  border-color: var(--line-strong);
+  background: rgba(198,161,91,.08);
+  border-color: rgba(198,161,91,.24);
   color: var(--v15-ink);
 }
 .site-footer .footer-bottom { margin-top: 8px; }

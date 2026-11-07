@@ -156,6 +156,7 @@ const translations = {
     "city_dammam": "الدمام",
     "city_khobar": "الخبر",
     "city_qatif": "القطيف",
+    "city_jubail": "الجبيل",
     "form_vehicle_type": "نوع السيارة",
     "vehicle_select": "اختر نوع السيارة",
     "vehicle_sedan": "سيدان",
@@ -340,6 +341,7 @@ const translations = {
     "city_dammam": "Dammam",
     "city_khobar": "Khobar",
     "city_qatif": "Qatif",
+    "city_jubail": "Jubail",
     "form_vehicle_type": "Vehicle Type",
     "vehicle_select": "Select a vehicle type",
     "vehicle_sedan": "Sedan",
@@ -1052,7 +1054,7 @@ async function submitBooking(e) {
     }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
   const internationalPhone = phone;
   const whatsappUrl = `https://wa.me/${internationalPhone}?text=${encodeURIComponent(message)}`;
-  const whatsappWindow = window.open("about:blank", "_blank");
+  const whatsappWindow = window.open(whatsappUrl, "_blank");
   let discordDelivered = false;
   try {
     const r = await fetch("/api/book", {
@@ -1078,8 +1080,7 @@ async function submitBooking(e) {
       discordDelivered ? "booking_success" : "booking_discord_error",
       discordDelivered ? "success" : "error",
     );
-    if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
-    else window.location.assign(whatsappUrl);
+    if (!whatsappWindow) window.location.assign(whatsappUrl);
     setTimeout(() => submit.disabled = false, cooldown);
   }
 }

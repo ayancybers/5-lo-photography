@@ -216,7 +216,7 @@ export default async function handler(req, res) {
             : isBot
             ? "Automated traffic was detected."
             : "A visitor opened a page on the website.",
-          color: isSecurityEvent ? 15158332 : 52298,
+          color: isSecurityEvent ? 0xA84F4F : isBot ? 0x7C8794 : 0xC6A15B,
           fields: [
             {
               name: "Visit type",
