@@ -1048,7 +1048,9 @@ async function submitBooking(e) {
     }\n- City: ${values.shootRegion}\n- Vehicle Type: ${values.carType}\n- Make & Model: ${
       values.vehicleModel || "Not specified"
     }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
-  const whatsappUrl = `https://api.whatsapp.com/send?phone=${SITE.whatsapp}&text=${encodeURIComponent(message)}`;
+  const whatsappNumber = "966597561765";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   try {
     fetch("/api/book", {
       method: "POST",
@@ -1069,7 +1071,6 @@ async function submitBooking(e) {
     console.warn("[booking] Browser storage unavailable", err);
   }
   const pageBeforeRedirect = window.location.href;
-  window.location.assign(whatsappUrl);
   window.setTimeout(() => {
     if (window.location.href !== pageBeforeRedirect) return;
     console.error("[booking] WhatsApp redirect did not leave the booking page");
