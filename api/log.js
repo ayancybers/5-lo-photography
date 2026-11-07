@@ -7,7 +7,7 @@ const WINDOW_MS = 60 * 60 * 1000;
 const MAX_HITS = 30;
 const DEDUPE_MS = 20 * 1000;
 const MAX_BODY_BYTES = 7000;
-const WEBHOOK_TIMEOUT_MS = 8000;
+const WEBHOOK_TIMEOUT_MS = 5000;
 
 function clean(value, max = 500) {
   return String(value ?? "")
@@ -15,6 +15,10 @@ function clean(value, max = 500) {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, max);
+}
+
+function webhookField(value, max = 900) {
+  return clean(value, max) || "Unavailable";
 }
 
 function getIp(req) {
@@ -81,10 +85,6 @@ function detectOs(ua) {
   return "Other";
 }
 
-function webhookField(value, max = 900) {
-  return clean(value, max) || "غير محدد";
-}
-
 function locationFrom(req) {
   const cityHeader = String(req.headers?.["x-vercel-ip-city"] || "").trim();
   let city = "";
@@ -95,11 +95,18 @@ function locationFrom(req) {
   }
   const countryCode = clean(req.headers?.["x-vercel-ip-country"] || "", 5).toUpperCase();
   const regionCode = clean(req.headers?.["x-vercel-ip-country-region"] || "", 40);
-  const countryNames = { SA: "Saudi Arabia", KW: "Kuwait", BH: "Bahrain", QA: "Qatar", AE: "United Arab Emirates", OM: "Oman" };
+  const countryNames = {
+    SA: "Saudi Arabia",
+    KW: "Kuwait",
+    BH: "Bahrain",
+    QA: "Qatar",
+    AE: "United Arab Emirates",
+    OM: "Oman",
+  };
   const regionNames = {
     "02": "Makkah", "03": "Madinah", "04": "Eastern Province", "05": "Al-Qassim",
     "06": "Ha'il", "07": "Tabuk", "08": "Northern Borders", "09": "Jazan",
-    "10": "Najran", "11": "Al-Bahah", "12": "Al-Jawf", "01": "Riyadh"
+    "10": "Najran", "11": "Al-Bahah", "12": "Al-Jawf", "01": "Riyadh",
   };
   const country = countryNames[countryCode] || countryCode;
   const region = regionNames[regionCode] || regionCode;
@@ -131,7 +138,6 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, error: "Method not allowed" });
   }
-
   if (!sameOrigin(req)) {
     return res.status(403).json({ success: false, error: "Origin not allowed" });
   }
@@ -140,7 +146,6 @@ export default async function handler(req, res) {
   if (contentType && !contentType.includes("application/json")) {
     return res.status(415).json({ success: false, error: "Unsupported media type" });
   }
-
   const contentLength = Number(req.headers?.["content-length"] || 0);
   if (contentLength > MAX_BODY_BYTES) {
     return res.status(413).json({ success: false, error: "Payload too large" });
@@ -149,7 +154,6 @@ export default async function handler(req, res) {
   const requestIp = getIp(req);
   cleanup(hits);
   cleanup(recent);
-
   if (hitLimit(hits, requestIp)) {
     return res.status(429).json({ success: false, error: "Too many requests" });
   }
@@ -162,32 +166,32 @@ export default async function handler(req, res) {
     const language = clean(body.language || "en", 5);
     const theme = clean(body.theme || "dark", 10);
     const acceptLanguage = clean(req.headers?.["accept-language"] || "Unavailable", 180);
-    const requestId = typeof globalThis.crypto?.randomUUID === "function"
-      ? globalThis.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    let referrer = "Direct / unavailable";
-    try {
-      const parsedReferrer = new URL(String(body.referrer || ""));
-      referrer = `${parsedReferrer.hostname}${parsedReferrer.pathname}`.slice(0, 180);
-    } catch {}
-    if (!["page_view", "developer_tools_attempt", "booking_whatsapp_redirect_failure"].includes(event)) {
+    const requestId = clean(body.requestId || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, 100);
+
+    const allowedEvents = [
+      "page_view",
+      "developer_tools_attempt",
+      "booking_whatsapp_redirect_failure",
+      "webhook_error",
+    ];
+    if (!allowedEvents.includes(event)) {
       return res.status(400).json({ success: false, error: "Invalid event" });
     }
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-
     if (!/^\/(?!\/)/.test(page)) {
       return res.status(400).json({ success: false, error: "Invalid page" });
     }
-
     if (!["ar", "en"].includes(language)) {
       return res.status(400).json({ success: false, error: "Invalid language" });
     }
-
     if (!["relax", "dark", "light"].includes(theme)) {
       return res.status(400).json({ success: false, error: "Invalid theme" });
     }
 
-    const dedupeKey = `${requestIp}|${page}|${event}`;
+    const isWebhookError = event === "webhook_error";
+    const isRedirectFailure = event === "booking_whatsapp_redirect_failure";
+    const dedupeKey = isWebhookError
+      ? `${requestIp}|${event}|${requestId}`
+      : `${requestIp}|${page}|${event}`;
     const now = Date.now();
     const recentHit = recent.get(dedupeKey);
     if (recentHit && now - recentHit < DEDUPE_MS) {
@@ -195,81 +199,121 @@ export default async function handler(req, res) {
     }
     recent.set(dedupeKey, now);
 
+    const webhookUrl = isWebhookError || isRedirectFailure
+      ? (process.env.DISCORD_WEBHOOK_URL || process.env.BOOKING_WEB)
+      : process.env.DISCORD_WEBHOOK_URL;
+
     if (!webhookUrl) {
+      if (isWebhookError) {
+        console.error("[5LO | webhook_error] No DISCORD_WEBHOOK_URL or BOOKING_WEB is configured.");
+        return res.status(503).json({ success: false, error: "Error webhook not configured" });
+      }
       return res.status(204).end();
     }
 
     const isBot = /bot|crawler|spider|slurp|headless|preview/i.test(ua);
-    const device = detectDevice(ua);
-    const browser = detectBrowser(ua);
-    const os = detectOs(ua);
     const isSecurityEvent = event === "developer_tools_attempt";
-    const isBookingRedirectFailure = event === "booking_whatsapp_redirect_failure";
-    const source = referrer === "Direct / unavailable"
-      ? "Direct"
-      : (() => {
-        try {
-          const originHost = new URL(String(body.referrer)).host;
-          return originHost === String(req.headers?.host || "") ? "Internal page" : `External · ${originHost}`;
-        } catch { return "Direct"; }
-      })();
+    const details = clean(body.details || body.reason || "", 900) || "Not provided";
+    const httpStatus = clean(body.httpStatus || body.status || "Unknown", 80);
+    const source = clean(body.source || "Browser booking flow", 100);
+    let referrer = "Direct / unavailable";
+    try {
+      const parsedReferrer = new URL(String(body.referrer || ""));
+      referrer = `${parsedReferrer.hostname}${parsedReferrer.pathname}`.slice(0, 180);
+    } catch {}
+
+    let title = "NEW VISITOR / SITE ENTRY";
+    let description = `A visitor opened the website. Approximate location: **${webhookField(locationFrom(req), 120)}**.`;
+    let color = isBot ? 0x7C8794 : 0xC6A15B;
+    let fields;
+    let username = "5LO Visitor Monitor";
+
+    if (isWebhookError) {
+      username = "5LO Site Monitor";
+      title = "5LO | webhook_error";
+      description = "The 5LO booking flow could not complete a server or webhook request.";
+      color = 0xD64545;
+      fields = [
+        { name: "Website", value: "5lo.store", inline: true },
+        { name: "Stage / Details", value: webhookField(details, 900), inline: false },
+        { name: "HTTP Status", value: webhookField(httpStatus, 80), inline: true },
+        { name: "Request ID", value: webhookField(requestId, 100), inline: true },
+        { name: "Source", value: webhookField(source, 100), inline: true },
+        { name: "Page", value: webhookField(page, 180), inline: true },
+        { name: "Time", value: `<t:${Math.floor(now / 1000)}:F>`, inline: false },
+      ];
+    } else if (isRedirectFailure) {
+      username = "5LO Site Monitor";
+      title = "5LO | WhatsApp redirect failure";
+      description = "The booking notification was processed, but the browser could not open WhatsApp automatically.";
+      color = 0xD68A32;
+      fields = [
+        { name: "Website", value: "5lo.store", inline: true },
+        { name: "Page", value: webhookField(page, 180), inline: true },
+        { name: "Device", value: detectDevice(ua), inline: true },
+        { name: "Browser", value: detectBrowser(ua), inline: true },
+        { name: "Request ID", value: webhookField(requestId, 100), inline: true },
+        { name: "Reason", value: webhookField(details, 900), inline: false },
+        { name: "Time", value: `<t:${Math.floor(now / 1000)}:F>`, inline: false },
+      ];
+    } else {
+      if (isSecurityEvent) {
+        title = "SECURITY / POSSIBLE DEVELOPER TOOLS ATTEMPT";
+        description = "A developer tools shortcut was detected. This is a heuristic signal and does not confirm the tools were opened.";
+        color = 0xA84F4F;
+      } else if (isBot) {
+        title = "AUTOMATED VISIT";
+      }
+      fields = [
+        {
+          name: "01 / VISITOR",
+          value: `**Location**\n${webhookField(locationFrom(req), 120)}\n**IP**\n\`${webhookField(requestIp, 120)}\`\n**Time**\n<t:${Math.floor(now / 1000)}:F>`,
+          inline: false,
+        },
+        {
+          name: "02 / SESSION",
+          value: `**Page**\n\`${webhookField(page, 180)}\`\n**Event**\n\`${webhookField(event, 50)}\`\n**Language / theme**\n${webhookField(language, 10)} / ${webhookField(theme, 10)}\n**Request ID**\n\`${requestId}\``,
+          inline: false,
+        },
+        {
+          name: "03 / DEVICE & BROWSER",
+          value: `**Device** · ${webhookField(detectDevice(ua), 50)}\n**Browser** · ${webhookField(detectBrowser(ua), 80)}\n**Operating system** · ${webhookField(detectOs(ua), 50)}`,
+          inline: false,
+        },
+        {
+          name: "04 / VISIT SOURCE",
+          value: `**Referrer**\n\`${webhookField(referrer, 180)}\`\n**Accept-Language**\n\`${webhookField(acceptLanguage, 180)}\``,
+          inline: false,
+        },
+        {
+          name: "05 / REQUEST DETAILS",
+          value: `**Method** · ${webhookField(req.method, 10)}\n**Host** · ${webhookField(req.headers?.host || "Unavailable", 100)}\n**User-Agent**\n\`${webhookField(ua, 700)}\``,
+          inline: false,
+        },
+      ];
+    }
 
     const payload = {
-      username: "5lo Visitor Monitor",
+      username,
       allowed_mentions: { parse: [] },
-      embeds: [
-        {
-          title: isBookingRedirectFailure
-            ? "BOOKING / WHATSAPP REDIRECT FAILED"
-            : isSecurityEvent
-            ? "SECURITY / POSSIBLE DEVELOPER TOOLS ATTEMPT"
-            : isBot ? "AUTOMATED VISIT" : "NEW VISITOR / SITE ENTRY",
-          description: isBookingRedirectFailure
-            ? "The browser stayed on the booking page after a WhatsApp redirect was requested. A fallback link was shown."
-            : isSecurityEvent
-            ? "A developer tools shortcut was detected. This is a heuristic signal and does not confirm the tools were opened."
-            : `A visitor opened the website. Approximate location: **${webhookField(locationFrom(req), 120)}**.`,
-          color: isBookingRedirectFailure || isSecurityEvent ? 0xA84F4F : isBot ? 0x7C8794 : 0xC6A15B,
-          fields: [
-            {
-              name: "01 / VISITOR",
-              value: `**Location**\n${webhookField(locationFrom(req), 120)}\n**IP**\n\`${webhookField(requestIp, 120)}\`\n**Time**\n<t:${Math.floor(now / 1000)}:F>`,
-              inline: false,
-            },
-            {
-              name: "02 / SESSION",
-              value: `**Page**\n\`${webhookField(page, 180)}\`\n**Event**\n\`${webhookField(event, 50)}\`\n**Language / theme**\n${webhookField(language, 10)} / ${webhookField(theme, 10)}\n**Request ID**\n\`${requestId}\``,
-              inline: false,
-            },
-            {
-              name: "03 / DEVICE & BROWSER",
-              value: `**Device** · ${webhookField(device, 50)}\n**Browser** · ${webhookField(browser, 80)}\n**Operating system** · ${webhookField(os, 50)}`,
-              inline: false,
-            },
-            {
-              name: "04 / VISIT SOURCE",
-              value: `**Source** · ${webhookField(source, 100)}\n**Referrer**\n\`${webhookField(referrer, 180)}\`\n**Accept-Language**\n\`${webhookField(acceptLanguage, 180)}\``,
-              inline: false,
-            },
-            {
-              name: "05 / REQUEST DETAILS",
-              value: `**Method** · ${webhookField(req.method, 10)}\n**Host** · ${webhookField(req.headers?.host || "Unavailable", 100)}\n**User-Agent**\n\`${webhookField(ua, 700)}\``,
-              inline: false,
-            },
-          ],
-          footer: { text: "5lo Photography | Visitor Monitor" },
-          timestamp: new Date(now).toISOString(),
-        },
-      ],
+      embeds: [{
+        title,
+        description,
+        color,
+        fields,
+        footer: { text: "5LO Photography | 5lo.store" },
+        timestamp: new Date(now).toISOString(),
+      }],
     };
 
     const response = await postWebhook(webhookUrl, payload);
     if (!response.ok) {
-      return res.status(502).json({ success: false, error: "Visitor notification failed" });
+      console.error(`[5LO ${event}] Discord webhook failed`, response.status);
+      return res.status(502).json({ success: false, error: "Discord notification failed" });
     }
-
-    return res.status(200).json({ success: true });
-  } catch {
+    return res.status(200).json({ success: true, requestId });
+  } catch (error) {
+    console.error("[5LO log API] Error", error?.message || error);
     return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 }

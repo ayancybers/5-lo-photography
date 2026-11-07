@@ -14,7 +14,11 @@ const PACKAGES = Object.freeze({
     en: "Rolling + Editing (120 SAR, was 150)",
     price: 120,
   },
-  rolling_static: { ar: "رولينق + ثابتة (250 ر.س)", en: "Rolling + Static (250 SAR)", price: 250 },
+  rolling_static: {
+    ar: "رولينق + ثابتة (250 ر.س)",
+    en: "Rolling + Static (250 SAR)",
+    price: 250,
+  },
   cinematic: {
     ar: "التصوير السينمائي (450 ر.س)",
     en: "Cinematic Production (450 SAR)",
@@ -50,6 +54,26 @@ const VEHICLES = Object.freeze({
   other: "Other",
 });
 
+const BUSINESS_WHATSAPP = "966597561765";
+const WINDOW_MS = 15 * 60 * 1000;
+const MAX_IP_HITS = 5;
+const MAX_PHONE_HITS = 3;
+const MAX_BODY_BYTES = 12000;
+const WEBHOOK_TIMEOUT_MS = 5000;
+const ERROR_WEBHOOK_TIMEOUT_MS = 2500;
+
+function clean(value, max = 1000) {
+  return String(value ?? "")
+    .replace(/[\u0000-\u001F\u007F]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, max);
+}
+
+function webhookField(value, max = 900) {
+  return clean(value, max) || "غير محدد";
+}
+
 function normalizeGccPhone(input) {
   let digits = String(input || "").replace(/\D/g, "");
   if (digits.startsWith("00")) digits = digits.slice(2);
@@ -62,20 +86,6 @@ function normalizeGccPhone(input) {
   if (/^05\d{8}$/.test(digits)) return `966${digits.slice(1)}`;
   if (/^5\d{8}$/.test(digits)) return `966${digits}`;
   return "";
-}
-
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_IP_HITS = 5;
-const MAX_PHONE_HITS = 3;
-const MAX_BODY_BYTES = 12000;
-const WEBHOOK_TIMEOUT_MS = 8000;
-
-function clean(value, max = 1000) {
-  return String(value ?? "")
-    .replace(/[\u0000-\u001F\u007F]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, max);
 }
 
 function getIp(req) {
@@ -115,14 +125,9 @@ function cleanup(map) {
   }
 }
 
-function webhookField(value, max = 900) {
-  const result = clean(value, max);
-  return result || "غير محدد";
-}
-
-async function postWebhook(url, payload) {
+async function postWebhook(url, payload, timeoutMs = WEBHOOK_TIMEOUT_MS) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetch(url, {
       method: "POST",
@@ -135,32 +140,62 @@ async function postWebhook(url, payload) {
   }
 }
 
-async function reportBookingIssue(reason, requestId = "not-created", status = "unknown") {
-  console.error("[booking] Failure", { reason, requestId, status });
-  const logWebhook = process.env.DISCORD_WEBHOOK_URL;
-  if (!logWebhook) return;
+async function reportBookingIssue(reason, requestId, status, extra = "") {
+  const timestamp = new Date().toISOString();
+  console.error("[5LO | webhook_error]", {
+    site: "5lo.store",
+    reason,
+    requestId,
+    status,
+    extra,
+  });
+
+  // A dedicated diagnostics webhook is preferred. If it is not configured,
+  // the booking webhook is used so failures are still visible in Discord.
+  const errorWebhook = process.env.DISCORD_WEBHOOK_URL || process.env.BOOKING_WEB;
+  if (!errorWebhook) {
+    console.error("[5LO | webhook_error] No DISCORD_WEBHOOK_URL or BOOKING_WEB is configured.");
+    return false;
+  }
+
   try {
-    const response = await postWebhook(logWebhook, {
-      username: "5lo Booking Monitor",
+    const response = await postWebhook(errorWebhook, {
+      username: "5LO Site Monitor",
       allowed_mentions: { parse: [] },
       embeds: [{
-        title: "BOOKING / DELIVERY ISSUE",
-        description: "A booking request could not be fully processed.",
-        color: 0xA84F4F,
+        title: "5LO | webhook_error",
+        description: "A booking request failed while processing on 5lo.store.",
+        color: 0xD64545,
         fields: [
-          { name: "Reason", value: String(reason).slice(0, 200), inline: true },
-          { name: "Request ID", value: String(requestId).slice(0, 100), inline: true },
-          { name: "Status", value: String(status).slice(0, 100), inline: true },
-          { name: "Time", value: new Date().toISOString(), inline: false },
+          { name: "Website", value: "5lo.store", inline: true },
+          { name: "Stage / Reason", value: webhookField(reason, 900), inline: false },
+          { name: "Request ID", value: webhookField(requestId, 100), inline: true },
+          { name: "HTTP Status", value: webhookField(status, 80), inline: true },
+          ...(extra ? [{ name: "Details", value: webhookField(extra, 900), inline: false }] : []),
+          { name: "Time", value: timestamp, inline: false },
         ],
-        footer: { text: "5lo Photography | Booking diagnostics" },
-        timestamp: new Date().toISOString(),
+        footer: { text: "5LO Photography | webhook_error" },
+        timestamp,
       }],
-    });
-    if (!response.ok) console.error("[booking] Discord diagnostics webhook failed", response.status);
+    }, ERROR_WEBHOOK_TIMEOUT_MS);
+    if (!response.ok) {
+      console.error("[5LO | webhook_error] Discord returned", response.status);
+      return false;
+    }
+    return true;
   } catch (error) {
-    console.error("[booking] Could not deliver diagnostics to Discord", error?.message || error);
+    console.error("[5LO | webhook_error] Could not send Discord report", error?.message || error);
+    return false;
   }
+}
+
+async function fail(res, status, errorCode, reason, requestId, extra = "") {
+  await reportBookingIssue(reason, requestId, status, extra);
+  return res.status(status).json({
+    success: false,
+    error: errorCode,
+    requestId,
+  });
 }
 
 export default async function handler(req, res) {
@@ -174,18 +209,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: "Method not allowed" });
   }
 
+  const requestId = typeof globalThis.crypto?.randomUUID === "function"
+    ? globalThis.crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
   if (!sameOrigin(req)) {
-    return res.status(403).json({ success: false, error: "Origin not allowed" });
+    return fail(res, 403, "Origin not allowed", "Origin validation failed", requestId);
   }
 
   const contentType = String(req.headers?.["content-type"] || "").toLowerCase();
   if (contentType && !contentType.includes("application/json")) {
-    return res.status(415).json({ success: false, error: "Unsupported media type" });
+    return fail(res, 415, "Unsupported media type", "Request content type was not JSON", requestId);
   }
 
   const contentLength = Number(req.headers?.["content-length"] || 0);
   if (contentLength > MAX_BODY_BYTES) {
-    return res.status(413).json({ success: false, error: "Payload too large" });
+    return fail(res, 413, "Payload too large", "Booking payload exceeded size limit", requestId);
   }
 
   const requestIp = getIp(req);
@@ -193,14 +232,14 @@ export default async function handler(req, res) {
   cleanup(phoneHits);
 
   if (hitLimit(ipHits, requestIp, MAX_IP_HITS)) {
-    return res.status(429).json({ success: false, error: "Too many requests" });
+    return fail(res, 429, "Too many requests", "IP rate limit exceeded", requestId);
   }
 
   try {
     const body = req.body && typeof req.body === "object" ? req.body : {};
-    const honeypot = clean(body.honeypot, 100);
-    if (honeypot) {
-      return res.status(400).json({ success: false, error: "Invalid request" });
+    if (clean(body.honeypot, 100)) {
+      // Do not send Discord alerts for the hidden spam-trap field.
+      return res.status(400).json({ success: false, error: "Invalid request", requestId });
     }
 
     const name = clean(body.name, 60);
@@ -213,15 +252,15 @@ export default async function handler(req, res) {
     const bookingDate = clean(body.bookingDate, 10);
     const notes = clean(body.notes, 500);
     const termsVersion = clean(body.termsVersion, 20);
-    const termsAcceptedAt = new Date().toISOString();
+
     if (body.acceptedTerms !== true || termsVersion !== "1.0") {
-      return res.status(400).json({ success: false, error: "Terms acceptance required" });
+      return fail(res, 400, "Terms acceptance required", "Customer did not accept the current terms", requestId);
     }
-    const webhookUrl = process.env.BOOKING_WEB;
 
     const selectedPackage = PACKAGES[packageKey];
     const selectedCity = CITIES[shootRegionKey];
     const selectedDay = DAYS[bookingDayKey];
+    const selectedVehicle = VEHICLES[carTypeKey];
     const parsedBookingDate = /^\d{4}-\d{2}-\d{2}$/.test(bookingDate)
       ? new Date(`${bookingDate}T12:00:00Z`)
       : null;
@@ -234,10 +273,11 @@ export default async function handler(req, res) {
       "friday",
       "saturday",
     ];
+    const todayInSaudi = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const validBookingDate = parsedBookingDate && !Number.isNaN(parsedBookingDate.valueOf()) &&
       parsedBookingDate.toISOString().slice(0, 10) === bookingDate &&
+      bookingDate > todayInSaudi &&
       weekdayKeys[parsedBookingDate.getUTCDay()] === bookingDayKey;
-    const selectedVehicle = VEHICLES[carTypeKey];
 
     if (
       name.length < 2 ||
@@ -249,72 +289,90 @@ export default async function handler(req, res) {
       !selectedVehicle ||
       (notes.length > 0 && notes.length < 3)
     ) {
-      return res.status(400).json({ success: false, error: "Invalid booking data" });
+      return fail(res, 400, "Invalid booking data", "Booking fields failed server-side validation", requestId);
     }
 
     if (hitLimit(phoneHits, phone, MAX_PHONE_HITS)) {
-      return res.status(429).json({ success: false, error: "Too many requests" });
+      return fail(res, 429, "Too many requests", "Phone number rate limit exceeded", requestId);
     }
 
-    if (!webhookUrl) {
-      await reportBookingIssue("BOOKING_WEB is not configured", "not-created", 500);
-      return res.status(500).json({ success: false, error: "Server configuration error" });
+    const bookingWebhook = process.env.BOOKING_WEB;
+    if (!bookingWebhook) {
+      return fail(res, 500, "Server configuration error", "BOOKING_WEB is not configured", requestId);
     }
 
-    const requestId = typeof globalThis.crypto?.randomUUID === "function"
-      ? globalThis.crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-
-    const whatsappUrl = `https://wa.me/${phone}`;
+    const termsAcceptedAt = new Date().toISOString();
     const carLabel = vehicleModel ? `${selectedVehicle} - ${vehicleModel}` : selectedVehicle;
-
     const payload = {
-      username: "5lo Photography",
+      username: "5LO Photography",
       allowed_mentions: { parse: [] },
-      embeds: [
-        {
-          title: "New Booking",
-          description: "تم استقبال طلب حجز جديد من الموقع.",
-          color: 52298,
-          fields: [
-            { name: "الاسم", value: webhookField(name, 200), inline: true },
-            { name: "رقم التواصل", value: webhookField(phone, 50), inline: true },
-            { name: "الباقة", value: webhookField(selectedPackage.ar, 200), inline: true },
-            { name: "السيارة", value: webhookField(carLabel, 200), inline: true },
-            { name: "المدينة", value: webhookField(selectedCity, 100), inline: true },
-            { name: "يوم الحجز", value: webhookField(selectedDay, 100), inline: true },
-            { name: "تاريخ الحجز", value: webhookField(bookingDate, 30), inline: true },
-            {
-              name: "موافقة الشروط",
-              value: `موافق • إصدار ${termsVersion} • ${webhookField(termsAcceptedAt, 40)}`,
-              inline: false,
-            },
-            { name: "رقم الطلب", value: `\`${requestId}\``, inline: false },
-            { name: "IP", value: `\`${webhookField(requestIp, 120)}\``, inline: false },
-            { name: "التفاصيل", value: webhookField(notes, 900), inline: false },
-            { name: "واتساب", value: `[فتح المحادثة](${whatsappUrl})`, inline: false },
-          ],
-          footer: { text: "5lo Photography • Booking API" },
-          timestamp: new Date().toISOString(),
-        },
-      ],
+      embeds: [{
+        title: "New Booking | 5LO",
+        description: "تم استقبال طلب حجز جديد من موقع 5lo.store.",
+        color: 52298,
+        fields: [
+          { name: "الاسم", value: webhookField(name, 200), inline: true },
+          { name: "رقم التواصل", value: webhookField(phone, 50), inline: true },
+          { name: "الباقة", value: webhookField(selectedPackage.ar, 200), inline: true },
+          { name: "السيارة", value: webhookField(carLabel, 200), inline: true },
+          { name: "المدينة", value: webhookField(selectedCity, 100), inline: true },
+          { name: "يوم الحجز", value: webhookField(selectedDay, 100), inline: true },
+          { name: "تاريخ الحجز", value: webhookField(bookingDate, 30), inline: true },
+          {
+            name: "موافقة الشروط",
+            value: `موافق • إصدار ${termsVersion} • ${webhookField(termsAcceptedAt, 40)}`,
+            inline: false,
+          },
+          { name: "رقم الطلب", value: `\`${requestId}\``, inline: false },
+          { name: "IP", value: `\`${webhookField(requestIp, 120)}\``, inline: false },
+          { name: "التفاصيل", value: webhookField(notes, 900), inline: false },
+          { name: "واتساب الأعمال", value: `[فتح محادثة 5LO](https://wa.me/${BUSINESS_WHATSAPP})`, inline: false },
+        ],
+        footer: { text: "5LO Photography | Booking API" },
+        timestamp: new Date().toISOString(),
+      }],
     };
 
-    const response = await postWebhook(webhookUrl, payload);
-
-    if (!response.ok) {
-      await reportBookingIssue("BOOKING_WEB rejected the booking", requestId, response.status);
-      return res.status(502).json({ success: false, error: "Failed to send booking notification" });
+    let response;
+    try {
+      response = await postWebhook(bookingWebhook, payload);
+    } catch (error) {
+      return fail(
+        res,
+        502,
+        "Booking notification unavailable",
+        "Could not reach BOOKING_WEB",
+        requestId,
+        error?.message || "Discord webhook request failed",
+      );
     }
 
-    console.info("[booking] Discord notification sent", { requestId });
+    if (!response.ok) {
+      return fail(
+        res,
+        502,
+        "Failed to send booking notification",
+        "BOOKING_WEB rejected the booking notification",
+        requestId,
+        `Discord HTTP ${response.status}`,
+      );
+    }
+
+    console.info("[5LO booking] Discord notification sent", { requestId });
     return res.status(200).json({
       success: true,
       requestId,
       package: selectedPackage.price,
+      whatsapp: BUSINESS_WHATSAPP,
     });
   } catch (error) {
-    await reportBookingIssue(error?.message || "Booking handler failed", "not-created", 500);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    return fail(
+      res,
+      500,
+      "Internal Server Error",
+      "Unhandled booking API exception",
+      requestId,
+      error?.message || "Unknown server error",
+    );
   }
 }

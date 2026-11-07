@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: "966597561765",
   instagram: "5lo.63",
   tiktok: "xzlav.1",
-  version: "15.25.0",
+  version: "15.30.0",
 });
 
 const translations = {
@@ -183,7 +183,7 @@ const translations = {
     "footer_top": "العودة للأعلى ↑",
     "booking_sending": "جاري الإرسال…",
     "booking_success": "تم تجهيز طلبك وفتح واتساب لإرساله.",
-    "booking_error": "تعذر إرسال الطلب الآن. افتح واتساب مباشرة وحاول مرة أخرى.",
+    "booking_error": "تعذر تأكيد طلب الحجز من النظام. أعد المحاولة أو تواصل معنا عبر واتساب.",
     "booking_wait": "انتظر لحظات قبل الإرسال مرة أخرى.",
     "booking_invalid": "تأكد من صحة البيانات المدخلة.",
     "booking_duplicate": "تم إرسال نفس الطلب مسبقاً. حاول لاحقاً بطلب جديد.",
@@ -368,7 +368,7 @@ const translations = {
     "footer_top": "Back to top ↑",
     "booking_sending": "Sending…",
     "booking_success": "Your request is ready. WhatsApp opened so you can send it.",
-    "booking_error": "Could not send the request. Open WhatsApp directly and try again.",
+    "booking_error": "The booking could not be confirmed by the server. Please retry or contact us on WhatsApp.",
     "booking_wait": "Please wait a moment before sending again.",
     "booking_invalid": "Please check the entered information.",
     "booking_duplicate": "The same request was already sent. Try again later.",
@@ -954,10 +954,51 @@ function setStatus(key, state) {
     e.dataset.state = state || "";
   }
 }
+function appendBookingStatusLink(label, url) {
+  const status = document.getElementById("bookingStatus");
+  if (!status) return;
+  const link = document.createElement("a");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = label;
+  link.style.cssText = "display:inline-block;margin:8px 6px;padding:8px 12px;border:1px solid currentColor;border-radius:9px;font-weight:800;text-decoration:underline";
+  status.append(document.createTextNode(" "), link);
+}
+
+function safeBookingStorageGet(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function reportClientBookingError(reason, httpStatus = "network", requestId = "client-side", event = "webhook_error") {
+  const payload = {
+    event,
+    page: location.pathname,
+    referrer: document.referrer,
+    language: currentLang,
+    theme: currentTheme,
+    source: "Browser booking flow",
+    details: cleanText(reason, 700),
+    httpStatus: String(httpStatus),
+    requestId: String(requestId),
+  };
+  fetch("/api/log", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch((error) => console.error("[5LO | webhook_error] Could not report client error", error));
+}
+
 async function submitBooking(e) {
   e.preventDefault();
   const form = e.currentTarget;
   if (document.getElementById("websiteField")?.value.trim()) return;
+
   const termsConsent = document.getElementById("termsConsent");
   if (termsConsent && !termsConsent.checked) {
     setStatus("terms_required", "error");
@@ -968,7 +1009,8 @@ async function submitBooking(e) {
     setStatus("booking_wait", "warn");
     return;
   }
-  const last = Number(localStorage.getItem("booking_last_sent_at") || 0);
+
+  const last = Number(safeBookingStorageGet("booking_last_sent_at") || 0);
   if (Date.now() - last < cooldown) {
     setStatus("booking_wait", "warn");
     return;
@@ -978,6 +1020,7 @@ async function submitBooking(e) {
     setStatus("booking_invalid", "error");
     return;
   }
+
   const phoneInput = document.getElementById("clientPhone").value.replace(/\D/g, "");
   const countryCode = document.getElementById("phoneCountry")?.value || "966";
   let phoneDigits = phoneInput.startsWith("00") ? phoneInput.slice(2) : phoneInput;
@@ -988,36 +1031,35 @@ async function submitBooking(e) {
   const phone = `${explicitCode || countryCode}${nationalNumber}`;
   const name = cleanText(document.getElementById("clientName").value, 50);
   const notes = cleanText(document.getElementById("clientDetails").value, 500);
+  const bookingDate = document.getElementById("bookingDate")?.value || "";
   const validGccPhone = /^(?:9665\d{8}|971(?:2|4|5|6|7|9)\d{7,8}|9733\d{7}|974[3567]\d{7}|965[4569]\d{7}|968[279]\d{7})$/.test(phone);
-  if (!validGccPhone || name.length < 2) {
+  if (!validGccPhone || name.length < 2 || !bookingDate) {
     setStatus("booking_invalid", "error");
     return;
   }
+
   const packageKey = document.getElementById("packageSelect").value;
   const pack = PACKAGE_VALUES[packageKey];
   if (!pack) {
     setStatus("booking_invalid", "error");
     return;
   }
+
   const values = {
     name,
     phone,
     packageKey,
-    packageType: selectText("packageSelect"),
     carTypeKey: document.getElementById("vehicleType").value,
-    carType: selectText("vehicleType"),
     vehicleModel: cleanText(document.getElementById("vehicleModel").value, 80),
     shootRegionKey: document.getElementById("clientCity").value,
-    shootRegion: selectText("clientCity"),
     bookingDayKey: document.getElementById("bookingDay").value,
-    bookingDay: selectText("bookingDay"),
     bookingDate,
     notes,
     acceptedTerms: true,
     termsVersion: "1.0",
     honeypot: "",
-    loadedAt: bookingLoadedAt,
   };
+
   const fp = [
     name.toLowerCase(),
     phone,
@@ -1028,60 +1070,110 @@ async function submitBooking(e) {
     values.vehicleModel.toLowerCase(),
     notes.toLowerCase(),
   ].join("|");
-  const prev = localStorage.getItem("booking_last_fingerprint");
-  const prevAt = Number(localStorage.getItem("booking_last_fingerprint_at") || 0);
+  const prev = safeBookingStorageGet("booking_last_fingerprint");
+  const prevAt = Number(safeBookingStorageGet("booking_last_fingerprint_at") || 0);
   if (fp === prev && Date.now() - prevAt < duplicateWindow) {
     setStatus("booking_duplicate", "warn");
     return;
   }
+
+  const message = currentLang === "ar"
+    ? `مرحباً 5lo Photography، أرغب بحجز موعد:\n- الاسم: ${name}\n- رقم التواصل: ${phone}\n- التاريخ: ${bookingDateText(new Date(values.bookingDate + "T12:00:00"))}\n- المدينة: ${selectText("clientCity")}\n- نوع السيارة: ${selectText("vehicleType")}\n- الماركة والموديل: ${values.vehicleModel || "غير محدد"}\n- الباقة: ${pack.ar}${notes ? `\n- التفاصيل: ${notes}` : ""}`
+    : `Hello 5lo Photography, I would like to book a session:\n- Name: ${name}\n- Phone: ${phone}\n- Date: ${bookingDateText(new Date(values.bookingDate + "T12:00:00"))}\n- City: ${selectText("clientCity")}\n- Vehicle Type: ${selectText("vehicleType")}\n- Make & Model: ${values.vehicleModel || "Not specified"}\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
+  const whatsappUrl = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+
+  // Open a blank tab while the click is still a direct user gesture. It is
+  // redirected to WhatsApp only after the server confirms Discord delivery.
+  let whatsappTab = null;
+  try {
+    whatsappTab = window.open("about:blank", "_blank");
+    if (whatsappTab) whatsappTab.document.title = "5LO — Preparing WhatsApp";
+  } catch (error) {
+    console.warn("[5LO booking] Browser did not allow a WhatsApp tab yet", error);
+  }
+
   const submit = document.getElementById("bookingSubmit");
   submit.disabled = true;
   setStatus("booking_sending", "busy");
-  const message = currentLang === "ar"
-    ? `مرحباً 5lo Photography، أرغب بحجز موعد:\n- الاسم: ${name}\n- رقم التواصل: ${phone}\n- التاريخ: ${
-      bookingDateText(new Date(values.bookingDate + "T12:00:00"))
-    }\n- المدينة: ${values.shootRegion}\n- نوع السيارة: ${values.carType}\n- الماركة والموديل: ${
-      values.vehicleModel || "غير محدد"
-    }\n- الباقة: ${pack.ar}${notes ? `\n- التفاصيل: ${notes}` : ""}`
-    : `Hello 5lo Photography, I would like to book a session:\n- Name: ${name}\n- Phone: ${phone}\n- Date: ${
-      bookingDateText(new Date(values.bookingDate + "T12:00:00"))
-    }\n- City: ${values.shootRegion}\n- Vehicle Type: ${values.carType}\n- Make & Model: ${
-      values.vehicleModel || "Not specified"
-    }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
-  const whatsappNumber = "966597561765";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-  window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+  let timer = null;
+  let completed = false;
   try {
-    fetch("/api/book", {
+    const controller = new AbortController();
+    timer = window.setTimeout(() => controller.abort(), 15000);
+    const response = await fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
-      keepalive: true,
-    }).then((response) => {
-      if (!response.ok) console.error("[booking] API rejected request", response.status);
-    }).catch((err) => console.error("[booking] API request failed", err));
-  } catch (err) {
-    console.error("[booking] Could not start API request", err);
+      signal: controller.signal,
+    });
+
+    const result = await response.json().catch(() => null);
+    if (!response.ok || !result || result.success !== true) {
+      const error = new Error(result?.error || `Booking API returned HTTP ${response.status}`);
+      error.httpStatus = response.status;
+      error.requestId = result?.requestId || "not-returned";
+      error.reportedByServer = Boolean(result?.requestId);
+      throw error;
+    }
+
+    completed = true;
+    try {
+      localStorage.setItem("booking_last_sent_at", String(Date.now()));
+      localStorage.setItem("booking_last_fingerprint", fp);
+      localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
+    } catch (storageError) {
+      console.warn("[5LO booking] Browser storage unavailable", storageError);
+    }
+
+    setStatus("booking_success", "success");
+    let whatsappOpened = false;
+    try {
+      if (whatsappTab && !whatsappTab.closed) {
+        whatsappTab.location.replace(whatsappUrl);
+        whatsappOpened = true;
+      }
+    } catch (redirectError) {
+      console.error("[5LO booking] WhatsApp tab navigation failed", redirectError);
+    }
+
+    if (!whatsappOpened) {
+      appendBookingStatusLink(
+        currentLang === "ar" ? "افتح واتساب لإرسال الطلب" : "Open WhatsApp to send the request",
+        whatsappUrl,
+      );
+      reportClientBookingError(
+        "Booking webhook succeeded, but browser could not open WhatsApp automatically",
+        "redirect-blocked",
+        result.requestId || "booking-succeeded",
+        "booking_whatsapp_redirect_failure",
+      );
+    }
+  } catch (error) {
+    console.error("[5LO booking] Submission failed", error);
+    try {
+      if (whatsappTab && !whatsappTab.closed) whatsappTab.close();
+    } catch {}
+
+    setStatus("booking_error", "error");
+    appendBookingStatusLink(
+      currentLang === "ar" ? "التواصل مباشرة عبر واتساب" : "Contact us directly on WhatsApp",
+      whatsappUrl,
+    );
+
+    if (!error.reportedByServer) {
+      reportClientBookingError(
+        error?.name === "AbortError" ? "Booking request timed out after 15 seconds" : (error?.message || "Browser could not reach /api/book"),
+        error.httpStatus || (error?.name === "AbortError" ? "timeout" : "network"),
+        error.requestId || "client-side",
+      );
+    }
+  } finally {
+    if (timer) window.clearTimeout(timer);
+    if (!completed) submit.disabled = false;
   }
-  try {
-    localStorage.setItem("booking_last_sent_at", String(Date.now()));
-    localStorage.setItem("booking_last_fingerprint", fp);
-    localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
-  } catch (err) {
-    console.warn("[booking] Browser storage unavailable", err);
-  }
-  const pageBeforeRedirect = window.location.href;
-  window.setTimeout(() => {
-    if (window.location.href !== pageBeforeRedirect) return;
-    console.error("[booking] WhatsApp redirect did not leave the booking page");
-    const fallback = document.createElement("a");
-    fallback.href = whatsappUrl;
-    fallback.textContent = currentLang === "ar" ? "افتح واتساب لإرسال الطلب" : "Open WhatsApp to send the request";
-    fallback.style.cssText = "display:block;margin:12px auto;padding:12px 16px;width:max-content;background:#25d366;color:#062b16;border-radius:10px;font-weight:800;text-decoration:none";
-    document.getElementById("bookingStatus")?.replaceChildren(fallback);
-    fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "booking_whatsapp_redirect_failure", page: location.pathname, referrer: document.referrer, language: currentLang, theme: currentTheme }), keepalive: true }).catch(() => {});
-  }, 1500);
 }
+
 let bookingWizardStep = 1;
 const bookingWeekdayKeys = [
   "sunday",
