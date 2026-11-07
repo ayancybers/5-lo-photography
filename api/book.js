@@ -27,20 +27,20 @@ const PACKAGES = Object.freeze({
 });
 
 const CITIES = Object.freeze({
-  dammam: "الدمام",
-  khobar: "الخبر",
-  qatif: "القطيف",
-  jubail: "الجبيل",
+  dammam: "Dammam, Saudi Arabia",
+  khobar: "Al Khobar, Saudi Arabia",
+  qatif: "Qatif, Saudi Arabia",
+  jubail: "Jubail, Saudi Arabia",
 });
 
 const DAYS = Object.freeze({
-  sunday: "الأحد",
-  monday: "الإثنين",
-  tuesday: "الثلاثاء",
-  wednesday: "الأربعاء",
-  thursday: "الخميس",
-  friday: "الجمعة",
-  saturday: "السبت",
+  sunday: "Sunday",
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
 });
 
 const VEHICLES = Object.freeze({
@@ -71,7 +71,7 @@ function clean(value, max = 1000) {
 }
 
 function webhookField(value, max = 900) {
-  return clean(value, max) || "غير محدد";
+  return clean(value, max) || "Not provided";
 }
 
 function normalizeGccPhone(input) {
@@ -303,32 +303,39 @@ export default async function handler(req, res) {
 
     const termsAcceptedAt = new Date().toISOString();
     const carLabel = vehicleModel ? `${selectedVehicle} - ${vehicleModel}` : selectedVehicle;
+    const displayPhone = `+${phone}`;
+    const displayBookingDate = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Riyadh",
+    }).format(parsedBookingDate);
     const payload = {
       username: "5LO Photography",
       allowed_mentions: { parse: [] },
       embeds: [{
-        title: "New Booking | 5LO",
-        description: "تم استقبال طلب حجز جديد من موقع 5lo.store.",
-        color: 52298,
+        title: "NEW BOOKING | 5LO",
+        description: "A new booking request has been received from **5lo.store**.",
+        color: 0xC6A15B,
         fields: [
-          { name: "الاسم", value: webhookField(name, 200), inline: true },
-          { name: "رقم التواصل", value: webhookField(phone, 50), inline: true },
-          { name: "الباقة", value: webhookField(selectedPackage.ar, 200), inline: true },
-          { name: "السيارة", value: webhookField(carLabel, 200), inline: true },
-          { name: "المدينة", value: webhookField(selectedCity, 100), inline: true },
-          { name: "يوم الحجز", value: webhookField(selectedDay, 100), inline: true },
-          { name: "تاريخ الحجز", value: webhookField(bookingDate, 30), inline: true },
+          { name: "Customer Name", value: webhookField(name, 200), inline: true },
+          { name: "Contact Number", value: webhookField(displayPhone, 50), inline: true },
+          { name: "Selected Package", value: webhookField(selectedPackage.en, 200), inline: true },
+          { name: "Vehicle", value: webhookField(carLabel, 200), inline: true },
+          { name: "City", value: webhookField(selectedCity, 100), inline: true },
+          { name: "Booking Day", value: webhookField(selectedDay, 100), inline: true },
+          { name: "Booking Date", value: webhookField(displayBookingDate, 40), inline: true },
           {
-            name: "موافقة الشروط",
-            value: `موافق • إصدار ${termsVersion} • ${webhookField(termsAcceptedAt, 40)}`,
+            name: "Terms & Conditions",
+            value: `Accepted • Version ${termsVersion} • ${webhookField(termsAcceptedAt, 40)}`,
             inline: false,
           },
-          { name: "رقم الطلب", value: `\`${requestId}\``, inline: false },
-          { name: "IP", value: `\`${webhookField(requestIp, 120)}\``, inline: false },
-          { name: "التفاصيل", value: webhookField(notes, 900), inline: false },
-          { name: "واتساب الأعمال", value: `[فتح محادثة 5LO](https://wa.me/${BUSINESS_WHATSAPP})`, inline: false },
+          { name: "Request ID", value: `\`${requestId}\``, inline: false },
+          { name: "IP Address", value: `\`${webhookField(requestIp, 120)}\``, inline: false },
+          { name: "Additional Details", value: webhookField(notes || "No additional details provided", 900), inline: false },
+          { name: "Business WhatsApp", value: `[Open 5LO WhatsApp](https://wa.me/${BUSINESS_WHATSAPP})`, inline: false },
         ],
-        footer: { text: "5LO Photography | Booking API" },
+        footer: { text: "5LO Photography | Booking Notification" },
         timestamp: new Date().toISOString(),
       }],
     };
