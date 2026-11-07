@@ -20,7 +20,7 @@ const translations = {
     "social_whatsapp": "واتساب",
     "social_instagram": "انستقرام",
     "social_tiktok": "تيك توك",
-    "announcement_text": "متاح للحجز الآن — الدمام / الخبر / القطيف",
+    "announcement_text": "متاح للحجز في الدمام والخبر والقطيف والجبيل",
     "theme_relax": "الوضع الهادئ",
     "theme_dark": "الوضع الداكن",
     "theme_light": "الوضع الفاتح",
@@ -180,7 +180,6 @@ const translations = {
     "form_details_placeholder": "نوع السيارة، الفكرة، أو أي ملاحظة...",
     "form_submit": "إرسال طلب الحجز ←",
     "form_note": "يرسل الخادم تفاصيل الحجز إلى ديسكورد، ويفتح واتساب برسالة جاهزة للإرسال.",
-    "footer_loc": "الدمام / الخبر / القطيف",
     "footer_top": "العودة للأعلى ↑",
     "booking_sending": "جاري الإرسال…",
     "booking_success": "تم تجهيز طلبك وفتح واتساب لإرساله.",
@@ -201,7 +200,7 @@ const translations = {
     "social_whatsapp": "WhatsApp",
     "social_instagram": "Instagram",
     "social_tiktok": "TikTok",
-    "announcement_text": "Now booking — Dammam / Khobar / Qatif",
+    "announcement_text": "Now booking in Dammam, Khobar, Qatif and Jubail",
     "theme_relax": "Relax",
     "theme_dark": "Dark",
     "theme_light": "Light",
@@ -366,7 +365,6 @@ const translations = {
     "form_submit": "Send booking request →",
     "form_note":
       "The server sends a Discord notification, and WhatsApp opens with a ready-to-send booking message.",
-    "footer_loc": "Dammam / Khobar / Qatif",
     "footer_top": "Back to top ↑",
     "booking_sending": "Sending…",
     "booking_success": "Your request is ready. WhatsApp opened so you can send it.",
@@ -639,9 +637,7 @@ function buildHeader() {
 
 function buildFooter() {
   document.getElementById("site-footer").innerHTML =
-    `<footer class="site-footer"><div class="container footer-grid"><div class="footer-actions"><span data-i18n="footer_loc">${
-      translations[currentLang].footer_loc
-    }</span><a href="/terms" data-i18n="footer_terms">${
+    `<footer class="site-footer"><div class="container footer-grid"><div class="footer-actions"><a href="/terms" data-i18n="footer_terms">${
       translations[currentLang].footer_terms
     }</a><a href="#top" data-i18n="footer_top">${
       translations[currentLang].footer_top
@@ -697,7 +693,7 @@ function changeLanguage(lang) {
   document.documentElement.classList.toggle("lang-en", currentLang === "en");
   document.documentElement.classList.toggle("lang-ar", currentLang === "ar");
   if (document.body.classList.contains("page-terms")) {
-    document.title = `${translations[currentLang].terms_title} | 5lo Photography`;
+    document.title = `5lo Photography | ${translations[currentLang].terms_title}`;
   }
   applyTranslations();
   const l = document.getElementById("currentLangLabel");
@@ -1052,8 +1048,7 @@ async function submitBooking(e) {
     }\n- City: ${values.shootRegion}\n- Vehicle Type: ${values.carType}\n- Make & Model: ${
       values.vehicleModel || "Not specified"
     }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
-  const internationalPhone = phone;
-  const whatsappUrl = `https://wa.me/${internationalPhone}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?phone=${SITE.whatsapp}&text=${encodeURIComponent(message)}`;
   fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1590,7 +1585,7 @@ function init() {
   document.documentElement.classList.toggle("lang-en", currentLang === "en");
   document.documentElement.classList.toggle("lang-ar", currentLang === "ar");
   if (document.body.classList.contains("page-terms")) {
-    document.title = `${translations[currentLang].terms_title} | 5lo Photography`;
+    document.title = `5lo Photography | ${translations[currentLang].terms_title}`;
   }
   initChrome();
   initSocial();

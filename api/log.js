@@ -161,6 +161,10 @@ export default async function handler(req, res) {
     const event = clean(body.event || "page_view", 40);
     const language = clean(body.language || "en", 5);
     const theme = clean(body.theme || "dark", 10);
+    const acceptLanguage = clean(req.headers?.["accept-language"] || "Unavailable", 180);
+    const requestId = typeof globalThis.crypto?.randomUUID === "function"
+      ? globalThis.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     let referrer = "Direct / unavailable";
     try {
       const parsedReferrer = new URL(String(body.referrer || ""));
@@ -200,6 +204,14 @@ export default async function handler(req, res) {
     const browser = detectBrowser(ua);
     const os = detectOs(ua);
     const isSecurityEvent = event === "developer_tools_attempt";
+    const source = referrer === "Direct / unavailable"
+      ? "Direct"
+      : (() => {
+        try {
+          const originHost = new URL(String(body.referrer)).host;
+          return originHost === String(req.headers?.host || "") ? "Internal page" : `External · ${originHost}`;
+        } catch { return "Direct"; }
+      })();
 
     const payload = {
       username: "5lo Visitor Monitor",
@@ -207,37 +219,38 @@ export default async function handler(req, res) {
       embeds: [
         {
           title: isSecurityEvent
-            ? "Security alert · Developer tools shortcut"
-            : isBot
-            ? "Bot / Automated Visit"
-            : "New Site Visit",
+            ? "SECURITY / POSSIBLE DEVELOPER TOOLS ATTEMPT"
+            : isBot ? "AUTOMATED VISIT" : "NEW VISITOR / SITE ENTRY",
           description: isSecurityEvent
-            ? "A developer tools shortcut attempt was detected. This is a heuristic signal and does not confirm the tools were opened."
-            : isBot
-            ? "Automated traffic was detected."
-            : "A visitor opened a page on the website.",
+            ? "A developer tools shortcut was detected. This is a heuristic signal and does not confirm the tools were opened."
+            : `A visitor opened the website. Approximate location: **${webhookField(locationFrom(req), 120)}**.`,
           color: isSecurityEvent ? 0xA84F4F : isBot ? 0x7C8794 : 0xC6A15B,
           fields: [
             {
-              name: "Visit type",
-              value: isSecurityEvent ? "Possible developer tools shortcut" : isBot ? "Automated visit" : "Page visit",
-              inline: true,
+              name: "01 / VISITOR",
+              value: `**Location**\n${webhookField(locationFrom(req), 120)}\n**IP**\n\`${webhookField(requestIp, 120)}\`\n**Time**\n<t:${Math.floor(now / 1000)}:F>`,
+              inline: false,
             },
-            { name: "Page", value: `\`${webhookField(page, 180)}\``, inline: true },
-            { name: "Referrer", value: `\`${webhookField(referrer, 180)}\``, inline: true },
-            { name: "Event", value: `\`${webhookField(event, 50)}\``, inline: true },
-            { name: "Time", value: `<t:${Math.floor(now / 1000)}:F>`, inline: false },
-            { name: "IP", value: `\`${webhookField(requestIp, 120)}\``, inline: true },
             {
-              name: "Approximate location (from IP)",
-              value: webhookField(locationFrom(req), 120),
-              inline: true,
+              name: "02 / SESSION",
+              value: `**Page**\n\`${webhookField(page, 180)}\`\n**Event**\n\`${webhookField(event, 50)}\`\n**Language / theme**\n${webhookField(language, 10)} / ${webhookField(theme, 10)}\n**Request ID**\n\`${requestId}\``,
+              inline: false,
             },
-            { name: "Device", value: webhookField(device, 50), inline: true },
-            { name: "Browser", value: webhookField(browser, 80), inline: true },
-            { name: "Operating system", value: webhookField(os, 50), inline: true },
-            { name: "Language / theme", value: `${webhookField(language, 10)} / ${webhookField(theme, 10)}`, inline: true },
-            { name: "User-Agent", value: `\`${webhookField(ua, 900)}\``, inline: false },
+            {
+              name: "03 / DEVICE & BROWSER",
+              value: `**Device** · ${webhookField(device, 50)}\n**Browser** · ${webhookField(browser, 80)}\n**Operating system** · ${webhookField(os, 50)}`,
+              inline: false,
+            },
+            {
+              name: "04 / VISIT SOURCE",
+              value: `**Source** · ${webhookField(source, 100)}\n**Referrer**\n\`${webhookField(referrer, 180)}\`\n**Accept-Language**\n\`${webhookField(acceptLanguage, 180)}\``,
+              inline: false,
+            },
+            {
+              name: "05 / REQUEST DETAILS",
+              value: `**Method** · ${webhookField(req.method, 10)}\n**Host** · ${webhookField(req.headers?.host || "Unavailable", 100)}\n**User-Agent**\n\`${webhookField(ua, 700)}\``,
+              inline: false,
+            },
           ],
           footer: { text: "5lo Photography | Visitor Monitor" },
           timestamp: new Date(now).toISOString(),
