@@ -4214,3 +4214,70 @@ body.gallery-lightbox-open {
     gap: 9px;
   }
 }
+
+
+/* 5LO mobile interaction lock + clean vector arrows (v15.31.0) */
+html,
+body {
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
+}
+
+.v15-link-arrow {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  overflow: visible;
+}
+
+.v15-round-link {
+  position: relative;
+  text-decoration: none;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.v15-round-link .v15-link-arrow {
+  width: 18px;
+  height: 18px;
+}
+
+.v15-round-link:hover {
+  color: var(--v15-bg);
+  background: var(--v15-gold);
+  border-color: var(--v15-gold);
+  transform: translateY(-2px);
+}
+
+.v15-service-tile > a {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: 0;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.v15-service-tile > a:hover {
+  color: var(--v15-bg);
+  background: var(--v15-gold);
+  border-color: var(--v15-gold);
+  transform: translateY(-2px);
+}
+
+.v15-work-tile .v15-link-arrow {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border: 1px solid rgba(216, 237, 248, .58);
+  border-radius: 50%;
+  background: rgba(9, 17, 26, .34);
+  color: #d8edf8;
+}
+
+:root[data-theme="light"] .v15-work-tile .v15-link-arrow {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .72);
+}

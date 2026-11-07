@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: "966597561765",
   instagram: "5lo.63",
   tiktok: "xzlav.1",
-  version: "15.30.0",
+  version: "15.31.0",
 });
 
 const translations = {
@@ -1557,6 +1557,15 @@ function initTransitions() {
   });
 }
 function enableProtection() {
+  // Prevent page-level pinch gestures on touch devices. Scrolling and normal
+  // form interactions remain available; the viewport meta tag is also locked.
+  const preventPageZoom = (event) => {
+    if (event.cancelable) event.preventDefault();
+  };
+  ["gesturestart", "gesturechange", "gestureend"].forEach((eventName) => {
+    document.addEventListener(eventName, preventPageZoom, { passive: false });
+  });
+
   const formField = (t) =>
     t && (
       ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName) ||
