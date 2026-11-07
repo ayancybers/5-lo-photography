@@ -49,6 +49,20 @@ const VEHICLES = Object.freeze({
   other: "Other",
 });
 
+function normalizeGccPhone(input) {
+  let digits = String(input || "").replace(/\D/g, "");
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  if (/^9665\d{8}$/.test(digits)) return digits;
+  if (/^971(?:2|4|5|6|7|9)\d{7,8}$/.test(digits)) return digits;
+  if (/^9733\d{7}$/.test(digits)) return digits;
+  if (/^974[3567]\d{7}$/.test(digits)) return digits;
+  if (/^965[4569]\d{7}$/.test(digits)) return digits;
+  if (/^968[279]\d{7}$/.test(digits)) return digits;
+  if (/^05\d{8}$/.test(digits)) return `966${digits.slice(1)}`;
+  if (/^5\d{8}$/.test(digits)) return `966${digits}`;
+  return "";
+}
+
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_IP_HITS = 5;
 const MAX_PHONE_HITS = 3;
@@ -161,7 +175,7 @@ export default async function handler(req, res) {
     }
 
     const name = clean(body.name, 60);
-    const phone = String(body.phone || "").replace(/\D/g, "").slice(0, 10);
+    const phone = normalizeGccPhone(body.phone);
     const packageKey = clean(body.packageKey, 40);
     const carTypeKey = clean(body.carTypeKey, 40);
     const vehicleModel = clean(body.vehicleModel, 80);
@@ -174,7 +188,7 @@ export default async function handler(req, res) {
     if (body.acceptedTerms !== true || termsVersion !== "1.0") {
       return res.status(400).json({ success: false, error: "Terms acceptance required" });
     }
-    const webhookUrl = process.env.bookingweb || process.env.BOOKING_WEB;
+    const webhookUrl = process.env.BOOKING_WEB;
 
     const selectedPackage = PACKAGES[packageKey];
     const selectedCity = CITIES[shootRegionKey];
@@ -198,13 +212,13 @@ export default async function handler(req, res) {
 
     if (
       name.length < 2 ||
-      !/^05\d{8}$/.test(phone) ||
+      !phone ||
       !selectedPackage ||
       !selectedCity ||
       !selectedDay ||
       !validBookingDate ||
       !selectedVehicle ||
-      notes.length < 3
+      (notes.length > 0 && notes.length < 3)
     ) {
       return res.status(400).json({ success: false, error: "Invalid booking data" });
     }
@@ -221,7 +235,7 @@ export default async function handler(req, res) {
       ? globalThis.crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-    const whatsappUrl = `https://wa.me/966${phone.slice(1)}`;
+    const whatsappUrl = `https://wa.me/${phone}`;
     const carLabel = vehicleModel ? `${selectedVehicle} - ${vehicleModel}` : selectedVehicle;
 
     const payload = {

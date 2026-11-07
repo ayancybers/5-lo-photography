@@ -637,13 +637,13 @@ function buildHeader() {
 
 function buildFooter() {
   document.getElementById("site-footer").innerHTML =
-    `<footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><img class="footer-logo" src="${SITE.logo}" alt="5lo Photography" decoding="async"><span class="brand-copy"><strong>5lo</strong><em>Photography</em></span></div></div><div class="footer-actions"><span data-i18n="footer_loc">${
+    `<footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><span class="brand-copy"><strong>5lo</strong><em>Photography</em></span></div></div><div class="footer-actions"><span data-i18n="footer_loc">${
       translations[currentLang].footer_loc
     }</span><a href="/terms" data-i18n="footer_terms">${
       translations[currentLang].footer_terms
     }</a><a href="#top" data-i18n="footer_top">${
       translations[currentLang].footer_top
-    }</a></div></div><div class="container footer-bottom"><div class="footer-signature"><span>5lo Photography</span><span>v${SITE.version}</span></div><a class="dev-credit" href="https://ayancybers.store/info" target="_blank" rel="noopener noreferrer" aria-label="Ayan Developer — ${
+    }</a></div></div><div class="container footer-bottom"><a class="dev-credit" href="https://ayancybers.store/info" target="_blank" rel="noopener noreferrer" aria-label="Ayan Developer — ${
       translations[currentLang].dev_credit
     }"><span class="dev-credit-label" data-i18n="dev_credit">${
       translations[currentLang].dev_credit
@@ -980,10 +980,18 @@ async function submitBooking(e) {
     setStatus("booking_invalid", "error");
     return;
   }
-  const phone = document.getElementById("clientPhone").value.replace(/\D/g, "");
+  const phoneInput = document.getElementById("clientPhone").value.replace(/\D/g, "");
+  const countryCode = document.getElementById("phoneCountry")?.value || "966";
+  let phoneDigits = phoneInput.startsWith("00") ? phoneInput.slice(2) : phoneInput;
+  const internationalCodes = ["966", "971", "973", "974", "965", "968"];
+  const explicitCode = internationalCodes.find((code) => phoneDigits.startsWith(code));
+  let nationalNumber = explicitCode ? phoneDigits.slice(explicitCode.length) : phoneDigits;
+  if (!explicitCode && nationalNumber.startsWith("0")) nationalNumber = nationalNumber.slice(1);
+  const phone = `${explicitCode || countryCode}${nationalNumber}`;
   const name = cleanText(document.getElementById("clientName").value, 50);
   const notes = cleanText(document.getElementById("clientDetails").value, 500);
-  if (!/^05\d{8}$/.test(phone) || name.length < 2 || notes.length < 3) {
+  const validGccPhone = /^(?:9665\d{8}|971(?:2|4|5|6|7|9)\d{7,8}|9733\d{7}|974[3567]\d{7}|965[4569]\d{7}|968[279]\d{7})$/.test(phone);
+  if (!validGccPhone || name.length < 2) {
     setStatus("booking_invalid", "error");
     return;
   }
@@ -1036,13 +1044,14 @@ async function submitBooking(e) {
       bookingDateText(new Date(values.bookingDate + "T12:00:00"))
     }\n- المدينة: ${values.shootRegion}\n- نوع السيارة: ${values.carType}\n- الماركة والموديل: ${
       values.vehicleModel || "غير محدد"
-    }\n- الباقة: ${pack.ar}\n- التفاصيل: ${notes}`
+    }\n- الباقة: ${pack.ar}${notes ? `\n- التفاصيل: ${notes}` : ""}`
     : `Hello 5lo Photography, I would like to book a session:\n- Name: ${name}\n- Phone: ${phone}\n- Date: ${
       bookingDateText(new Date(values.bookingDate + "T12:00:00"))
     }\n- City: ${values.shootRegion}\n- Vehicle Type: ${values.carType}\n- Make & Model: ${
       values.vehicleModel || "Not specified"
-    }\n- Package: ${pack.en}\n- Details: ${notes}`;
-  const whatsappUrl = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+    }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
+  const internationalPhone = phone;
+  const whatsappUrl = `https://wa.me/${internationalPhone}?text=${encodeURIComponent(message)}`;
   const whatsappWindow = window.open("about:blank", "_blank");
   let discordDelivered = false;
   try {
@@ -1214,7 +1223,12 @@ function initBooking() {
     () => setBookingStep(bookingWizardStep - 1),
   );
   document.getElementById("clientPhone")?.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 12);
+  });
+  document.getElementById("phoneCountry")?.addEventListener("change", (e) => {
+    const dialPrefixes = { "966": "5XXXXXXXX", "971": "5XXXXXXX", "973": "3XXXXXXX", "974": "3XXXXXXX", "965": "5XXXXXXX", "968": "9XXXXXXX" };
+    const phone = document.getElementById("clientPhone");
+    if (phone) phone.placeholder = dialPrefixes[e.target.value] || "Enter number";
   });
   ["clientName", "vehicleModel", "clientDetails"].forEach((id) =>
     document.getElementById(id)?.addEventListener("input", (e) => {
@@ -1264,6 +1278,8 @@ function initGallery() {
   const closeLightbox = () => {
     lightboxVideo.pause();
     lightboxVideo.removeAttribute("src");
+    lightboxVideo.load();
+    lightbox.querySelectorAll(".gallery-video-fallback").forEach((link) => link.remove());
     lightboxVideo.load();
     lightboxVideo.hidden = true;
     lightboxImage.hidden = true;
@@ -1338,24 +1354,40 @@ function initGallery() {
       if (video.dataset.userStarted === "true") card.classList.add("is-playing");
     });
     video.addEventListener("pause", () => card.classList.remove("is-playing"));
-    hint.addEventListener("click", async (event) => {
+    const openVideo = async (event) => {
       event.preventDefault();
       event.stopPropagation();
       video.dataset.userStarted = "true";
-      video.controls = true;
-      video.muted = false;
-      video.defaultMuted = false;
-      video.removeAttribute("muted");
-      video.volume = 1;
-      const play = video.play();
-      if (play && typeof play.then === "function") {
-        try {
-          await play;
-        } catch {
-          showVideoFallback();
-        }
+      returnFocus = hint;
+      const src = video.currentSrc || video.querySelector("source")?.src;
+      if (!src) return showVideoFallback();
+      video.pause();
+      lightboxImage.hidden = true;
+      lightboxVideo.hidden = false;
+      lightboxVideo.src = src;
+      lightboxVideo.muted = false;
+      lightboxVideo.defaultMuted = false;
+      lightboxVideo.controls = true;
+      lightboxVideo.playsInline = true;
+      lightboxVideo.volume = 1;
+      lightbox.hidden = false;
+      document.body.classList.add("gallery-lightbox-open");
+      lightboxVideo.load();
+      try {
+        await lightboxVideo.play();
+      } catch {
+        const fallback = document.createElement("a");
+        fallback.className = "gallery-video-fallback";
+        fallback.href = src;
+        fallback.target = "_blank";
+        fallback.rel = "noopener noreferrer";
+        fallback.textContent = currentLang === "ar" ? "افتح الفيديو" : "Open video";
+        fallback.addEventListener("click", (e) => e.stopPropagation());
+        lightbox.append(fallback);
       }
-    });
+    };
+    hint.addEventListener("click", openVideo);
+    card.addEventListener("click", openVideo);
   });
   const apply = (cat) => {
     let n = 0;
@@ -1448,7 +1480,7 @@ function enableProtection() {
     fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event: "developer_tools_attempt", page: location.pathname }),
+      body: JSON.stringify({ event: "developer_tools_attempt", page: location.pathname, referrer: document.referrer, language: currentLang, theme: currentTheme }),
       keepalive: true,
     }).catch(() => {});
   };
@@ -1551,6 +1583,9 @@ function trackPageView() {
   const payload = {
     event: "page_view",
     page: location.pathname,
+    referrer: document.referrer,
+    language: currentLang,
+    theme: currentTheme,
   };
   fetch("/api/log", {
     method: "POST",

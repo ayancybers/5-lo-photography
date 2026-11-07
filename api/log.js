@@ -93,9 +93,17 @@ function locationFrom(req) {
   } catch {
     city = clean(cityHeader, 100);
   }
-  const country = clean(req.headers?.["x-vercel-ip-country"] || "", 10);
-  const region = clean(req.headers?.["x-vercel-ip-country-region"] || "", 20);
-  return [city, region, country].filter(Boolean).join(", ") || "غير متاح";
+  const countryCode = clean(req.headers?.["x-vercel-ip-country"] || "", 5).toUpperCase();
+  const regionCode = clean(req.headers?.["x-vercel-ip-country-region"] || "", 40);
+  const countryNames = { SA: "Saudi Arabia", KW: "Kuwait", BH: "Bahrain", QA: "Qatar", AE: "United Arab Emirates", OM: "Oman" };
+  const regionNames = {
+    "02": "Makkah", "03": "Madinah", "04": "Eastern Province", "05": "Al-Qassim",
+    "06": "Ha'il", "07": "Tabuk", "08": "Northern Borders", "09": "Jazan",
+    "10": "Najran", "11": "Al-Bahah", "12": "Al-Jawf", "01": "Riyadh"
+  };
+  const country = countryNames[countryCode] || countryCode;
+  const region = regionNames[regionCode] || regionCode;
+  return [city, region, country].filter(Boolean).join(", ") || "Unavailable";
 }
 
 async function postWebhook(url, payload) {
@@ -151,10 +159,17 @@ export default async function handler(req, res) {
     const ua = clean(req.headers?.["user-agent"] || "Unknown", 500);
     const page = clean(body.page || "/", 200);
     const event = clean(body.event || "page_view", 40);
+    const language = clean(body.language || "en", 5);
+    const theme = clean(body.theme || "dark", 10);
+    let referrer = "Direct / unavailable";
+    try {
+      const parsedReferrer = new URL(String(body.referrer || ""));
+      referrer = `${parsedReferrer.hostname}${parsedReferrer.pathname}`.slice(0, 180);
+    } catch {}
     if (!["page_view", "developer_tools_attempt"].includes(event)) {
       return res.status(400).json({ success: false, error: "Invalid event" });
     }
-    const webhookUrl = process.env.webhook || process.env.DISCORD_WEBHOOK_URL;
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     if (!/^\/(?!\/)/.test(page)) {
       return res.status(400).json({ success: false, error: "Invalid page" });
@@ -197,32 +212,34 @@ export default async function handler(req, res) {
             ? "Bot / Automated Visit"
             : "New Site Visit",
           description: isSecurityEvent
-            ? "تم رصد محاولة اختصار لفتح أدوات المطور. هذا تنبيه احتمالي ولا يؤكد فتح الأدوات."
+            ? "A developer tools shortcut attempt was detected. This is a heuristic signal and does not confirm the tools were opened."
             : isBot
-            ? "تم رصد طلب آلي للموقع."
-            : "تم تسجيل دخول زائر جديد للموقع.",
+            ? "Automated traffic was detected."
+            : "A visitor opened a page on the website.",
           color: isSecurityEvent ? 15158332 : 52298,
           fields: [
             {
-              name: "الحالة",
-              value: isSecurityEvent ? "محاولة أدوات مطور (اشتباه)" : "زيارة صفحة",
+              name: "Visit type",
+              value: isSecurityEvent ? "Possible developer tools shortcut" : isBot ? "Automated visit" : "Page visit",
               inline: true,
             },
-            { name: "الصفحة", value: `\`${webhookField(page, 180)}\``, inline: true },
-            { name: "الحدث", value: `\`${webhookField(event, 50)}\``, inline: true },
-            { name: "الوقت", value: `<t:${Math.floor(now / 1000)}:F>`, inline: false },
+            { name: "Page", value: `\`${webhookField(page, 180)}\``, inline: true },
+            { name: "Referrer", value: `\`${webhookField(referrer, 180)}\``, inline: true },
+            { name: "Event", value: `\`${webhookField(event, 50)}\``, inline: true },
+            { name: "Time", value: `<t:${Math.floor(now / 1000)}:F>`, inline: false },
             { name: "IP", value: `\`${webhookField(requestIp, 120)}\``, inline: true },
             {
-              name: "الموقع التقريبي من IP",
+              name: "Approximate location (from IP)",
               value: webhookField(locationFrom(req), 120),
               inline: true,
             },
-            { name: "الجهاز", value: webhookField(device, 50), inline: true },
-            { name: "المتصفح", value: webhookField(browser, 80), inline: true },
-            { name: "النظام", value: webhookField(os, 50), inline: true },
+            { name: "Device", value: webhookField(device, 50), inline: true },
+            { name: "Browser", value: webhookField(browser, 80), inline: true },
+            { name: "Operating system", value: webhookField(os, 50), inline: true },
+            { name: "Language / theme", value: `${webhookField(language, 10)} / ${webhookField(theme, 10)}`, inline: true },
             { name: "User-Agent", value: `\`${webhookField(ua, 900)}\``, inline: false },
           ],
-          footer: { text: "5lo Photography • Visitor Monitor" },
+          footer: { text: "5lo Photography | Visitor Monitor" },
           timestamp: new Date(now).toISOString(),
         },
       ],
