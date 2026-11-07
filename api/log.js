@@ -170,7 +170,7 @@ export default async function handler(req, res) {
       const parsedReferrer = new URL(String(body.referrer || ""));
       referrer = `${parsedReferrer.hostname}${parsedReferrer.pathname}`.slice(0, 180);
     } catch {}
-    if (!["page_view", "developer_tools_attempt"].includes(event)) {
+    if (!["page_view", "developer_tools_attempt", "booking_whatsapp_redirect_failure"].includes(event)) {
       return res.status(400).json({ success: false, error: "Invalid event" });
     }
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
@@ -204,6 +204,7 @@ export default async function handler(req, res) {
     const browser = detectBrowser(ua);
     const os = detectOs(ua);
     const isSecurityEvent = event === "developer_tools_attempt";
+    const isBookingRedirectFailure = event === "booking_whatsapp_redirect_failure";
     const source = referrer === "Direct / unavailable"
       ? "Direct"
       : (() => {
@@ -218,13 +219,17 @@ export default async function handler(req, res) {
       allowed_mentions: { parse: [] },
       embeds: [
         {
-          title: isSecurityEvent
+          title: isBookingRedirectFailure
+            ? "BOOKING / WHATSAPP REDIRECT FAILED"
+            : isSecurityEvent
             ? "SECURITY / POSSIBLE DEVELOPER TOOLS ATTEMPT"
             : isBot ? "AUTOMATED VISIT" : "NEW VISITOR / SITE ENTRY",
-          description: isSecurityEvent
+          description: isBookingRedirectFailure
+            ? "The browser stayed on the booking page after a WhatsApp redirect was requested. A fallback link was shown."
+            : isSecurityEvent
             ? "A developer tools shortcut was detected. This is a heuristic signal and does not confirm the tools were opened."
             : `A visitor opened the website. Approximate location: **${webhookField(locationFrom(req), 120)}**.`,
-          color: isSecurityEvent ? 0xA84F4F : isBot ? 0x7C8794 : 0xC6A15B,
+          color: isBookingRedirectFailure || isSecurityEvent ? 0xA84F4F : isBot ? 0x7C8794 : 0xC6A15B,
           fields: [
             {
               name: "01 / VISITOR",

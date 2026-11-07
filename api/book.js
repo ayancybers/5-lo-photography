@@ -229,6 +229,7 @@ export default async function handler(req, res) {
     }
 
     if (!webhookUrl) {
+      console.error("[booking] BOOKING_WEB is not configured");
       return res.status(500).json({ success: false, error: "Server configuration error" });
     }
 
@@ -274,15 +275,18 @@ export default async function handler(req, res) {
     const response = await postWebhook(webhookUrl, payload);
 
     if (!response.ok) {
+      console.error("[booking] Discord webhook rejected request", { requestId, status: response.status });
       return res.status(502).json({ success: false, error: "Failed to send booking notification" });
     }
 
+    console.info("[booking] Discord notification sent", { requestId });
     return res.status(200).json({
       success: true,
       requestId,
       package: selectedPackage.price,
     });
-  } catch {
+  } catch (error) {
+    console.error("[booking] Handler failed", error?.message || error);
     return res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 }

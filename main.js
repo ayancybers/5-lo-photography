@@ -1049,18 +1049,37 @@ async function submitBooking(e) {
       values.vehicleModel || "Not specified"
     }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
   const whatsappUrl = `https://api.whatsapp.com/send?phone=${SITE.whatsapp}&text=${encodeURIComponent(message)}`;
-  fetch("/api/book", {
+  try {
+    fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
       keepalive: true,
     }).then((response) => {
-      if (!response.ok) console.warn("Booking API returned", response.status);
-    }).catch((err) => console.warn("Booking API unavailable:", err));
-  localStorage.setItem("booking_last_sent_at", String(Date.now()));
-  localStorage.setItem("booking_last_fingerprint", fp);
-  localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
+      if (!response.ok) console.error("[booking] API rejected request", response.status);
+    }).catch((err) => console.error("[booking] API request failed", err));
+  } catch (err) {
+    console.error("[booking] Could not start API request", err);
+  }
+  try {
+    localStorage.setItem("booking_last_sent_at", String(Date.now()));
+    localStorage.setItem("booking_last_fingerprint", fp);
+    localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
+  } catch (err) {
+    console.warn("[booking] Browser storage unavailable", err);
+  }
+  const pageBeforeRedirect = window.location.href;
   window.location.assign(whatsappUrl);
+  window.setTimeout(() => {
+    if (window.location.href !== pageBeforeRedirect) return;
+    console.error("[booking] WhatsApp redirect did not leave the booking page");
+    const fallback = document.createElement("a");
+    fallback.href = whatsappUrl;
+    fallback.textContent = currentLang === "ar" ? "افتح واتساب لإرسال الطلب" : "Open WhatsApp to send the request";
+    fallback.style.cssText = "display:block;margin:12px auto;padding:12px 16px;width:max-content;background:#25d366;color:#062b16;border-radius:10px;font-weight:800;text-decoration:none";
+    document.getElementById("bookingStatus")?.replaceChildren(fallback);
+    fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "booking_whatsapp_redirect_failure", page: location.pathname, referrer: document.referrer, language: currentLang, theme: currentTheme }), keepalive: true }).catch(() => {});
+  }, 1500);
 }
 let bookingWizardStep = 1;
 const bookingWeekdayKeys = [
