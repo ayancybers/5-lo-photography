@@ -639,7 +639,7 @@ function buildHeader() {
 
 function buildFooter() {
   document.getElementById("site-footer").innerHTML =
-    `<footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><span class="brand-copy"><strong>5lo</strong><em>Photography</em></span></div></div><div class="footer-actions"><span data-i18n="footer_loc">${
+    `<footer class="site-footer"><div class="container footer-grid"><div class="footer-actions"><span data-i18n="footer_loc">${
       translations[currentLang].footer_loc
     }</span><a href="/terms" data-i18n="footer_terms">${
       translations[currentLang].footer_terms
@@ -1054,35 +1054,18 @@ async function submitBooking(e) {
     }\n- Package: ${pack.en}${notes ? `\n- Details: ${notes}` : ""}`;
   const internationalPhone = phone;
   const whatsappUrl = `https://wa.me/${internationalPhone}?text=${encodeURIComponent(message)}`;
-  const whatsappWindow = window.open(whatsappUrl, "_blank");
-  let discordDelivered = false;
-  try {
-    const r = await fetch("/api/book", {
+  fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
       keepalive: true,
-    });
-    if (!r.ok) throw new Error(`Booking API returned ${r.status}`);
-    discordDelivered = true;
-  } catch (err) {
-    console.warn("Booking API unavailable:", err);
-  } finally {
-    localStorage.setItem("booking_last_sent_at", String(Date.now()));
-    localStorage.setItem("booking_last_fingerprint", fp);
-    localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
-    form.reset();
-    const dateField = document.getElementById("bookingDate");
-    if (dateField) dateField.value = "";
-    setBookingStep(1);
-    renderBookingDates();
-    setStatus(
-      discordDelivered ? "booking_success" : "booking_discord_error",
-      discordDelivered ? "success" : "error",
-    );
-    if (!whatsappWindow) window.location.assign(whatsappUrl);
-    setTimeout(() => submit.disabled = false, cooldown);
-  }
+    }).then((response) => {
+      if (!response.ok) console.warn("Booking API returned", response.status);
+    }).catch((err) => console.warn("Booking API unavailable:", err));
+  localStorage.setItem("booking_last_sent_at", String(Date.now()));
+  localStorage.setItem("booking_last_fingerprint", fp);
+  localStorage.setItem("booking_last_fingerprint_at", String(Date.now()));
+  window.location.assign(whatsappUrl);
 }
 let bookingWizardStep = 1;
 const bookingWeekdayKeys = [
