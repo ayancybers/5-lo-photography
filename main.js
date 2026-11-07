@@ -4,7 +4,7 @@ const SITE = Object.freeze({
   whatsapp: "966597561765",
   instagram: "5lo.63",
   tiktok: "xzlav.1",
-  version: "15.31.0",
+  version: "15.32.0",
 });
 
 const translations = {
@@ -621,11 +621,11 @@ function buildHeader() {
     <div class="fullscreen-menu" id="fullscreenMenu" aria-hidden="true">
       <div class="fullscreen-inner">
         <div class="fullscreen-top"><span class="mini-label">${SITE.brand.toUpperCase()}</span><button type="button" class="close-menu" id="closeMenu" aria-label="Close menu">×</button></div>
-        <a href="/" data-i18n="nav_home">${translations[currentLang].nav_home}</a>
-        <a href="/gallery" data-i18n="nav_works">${translations[currentLang].nav_works}</a>
-        <a href="/services" data-i18n="nav_services">${translations[currentLang].nav_services}</a>
-        <a href="/packages" data-i18n="nav_packages">${translations[currentLang].nav_packages}</a>
-        <a href="/terms" data-i18n="nav_terms">${translations[currentLang].nav_terms}</a>
+        <a href="/"><span data-i18n="nav_home">${translations[currentLang].nav_home}</span><span class="menu-link-meta" aria-hidden="true"><span class="menu-link-number">01</span><svg class="menu-link-arrow" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a href="/gallery"><span data-i18n="nav_works">${translations[currentLang].nav_works}</span><span class="menu-link-meta" aria-hidden="true"><span class="menu-link-number">02</span><svg class="menu-link-arrow" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a href="/services"><span data-i18n="nav_services">${translations[currentLang].nav_services}</span><span class="menu-link-meta" aria-hidden="true"><span class="menu-link-number">03</span><svg class="menu-link-arrow" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a href="/packages"><span data-i18n="nav_packages">${translations[currentLang].nav_packages}</span><span class="menu-link-meta" aria-hidden="true"><span class="menu-link-number">04</span><svg class="menu-link-arrow" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <a href="/terms"><span data-i18n="nav_terms">${translations[currentLang].nav_terms}</span><span class="menu-link-meta" aria-hidden="true"><span class="menu-link-number">05</span><svg class="menu-link-arrow" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
       </div>
     </div>`;
   const page = location.pathname.replace(/\/+$/, "") || "/";
@@ -645,7 +645,7 @@ function buildFooter() {
       translations[currentLang].dev_credit
     }"><span class="dev-credit-label" data-i18n="dev_credit">${
       translations[currentLang].dev_credit
-    }</span><span class="dev-credit-name">Ayan Developer</span><span class="dev-credit-icon" aria-hidden="true">&lt;/&gt;</span><span class="dev-credit-arrow" aria-hidden="true">↗</span></a></div></footer><div class="social-float" id="socialFloat"><div class="social-menu" id="socialMenu" aria-hidden="true"><a href="https://wa.me/${SITE.whatsapp}?text=${
+    }</span><span class="dev-credit-name">Ayan Developer</span><span class="dev-credit-icon" aria-hidden="true">&lt;/&gt;</span><span class="dev-credit-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div></footer><div class="social-float" id="socialFloat"><div class="social-menu" id="socialMenu" aria-hidden="true"><a href="https://wa.me/${SITE.whatsapp}?text=${
       encodeURIComponent("مرحباً، أود الاستفسار عن خدمات 5lo Photography")
     }" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-whatsapp" aria-hidden="true"></span><span data-i18n="social_whatsapp">${
       translations[currentLang].social_whatsapp
@@ -653,7 +653,7 @@ function buildFooter() {
       translations[currentLang].social_instagram
     }</span></a><a href="https://www.tiktok.com/@${SITE.tiktok}" target="_blank" rel="noopener noreferrer"><span class="social-icon icon-tiktok" aria-hidden="true"></span><span data-i18n="social_tiktok">${
       translations[currentLang].social_tiktok
-    }</span></a></div><button type="button" class="social-toggle" id="socialToggle" aria-expanded="false" aria-label="Social"><span class="social-chat-icon" aria-hidden="true"></span></button></div>`;
+    }</span></a></div><button type="button" class="social-toggle" id="socialToggle" aria-expanded="false" aria-label="Social"><span class="social-chat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="1.8"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></button></div>`;
 }
 function applyThemeMeta() {
   const colors = { relax: "#28363d", dark: "#15191b", light: "#f2f4f3" };
@@ -1424,7 +1424,7 @@ function initGallery() {
       hint.type = "button";
       hint.className = "video-play-indicator";
       hint.setAttribute("aria-label", currentLang === "ar" ? "تشغيل الفيديو بالصوت" : "Play video with sound");
-      hint.textContent = "▶";
+      hint.innerHTML = '<svg class="video-play-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.75v12.5L18 12 8 5.75Z" fill="currentColor"/></svg>';
       card.append(hint);
     }
     const hint = card.querySelector(".video-play-indicator");
